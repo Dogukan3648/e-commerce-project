@@ -1,0 +1,60 @@
+import heroWoman from "../assets/images/hero-woman.png";
+
+const HeroSlider = () => {
+  return (
+    <section className="mx-auto mt-20 w-97 max-w-full rounded-2xl bg-linear-to-r from-[#96E9FB] to-[#ABECD6] lg:mt-6 lg:w-[90%]">
+      <div className="flex flex-col items-center gap-16 pt-20 lg:h-[622px] lg:flex-row lg:gap-0 lg:pt-0 lg:pl-52">
+        <div className="flex w-full flex-col items-center gap-8 text-center lg:w-137 lg:flex-none lg:items-start lg:text-left">
+          <span className="text-base font-bold leading-6 tracking-[0.1px] text-[#2A7CC7]">
+            SUMMER 2020
+          </span>
+
+          <h1 className="w-67 text-[40px] font-bold leading-[50px] tracking-[0.2px] text-dark lg:w-137 lg:whitespace-nowrap lg:text-[58px] lg:leading-20">
+            NEW COLLECTION
+          </h1>
+
+          <p className="w-72 text-xl font-normal leading-8 tracking-[0.2px] text-muted lg:w-94">
+            We know how large objects will act, but things on a small scale.
+          </p>
+
+          <button
+            type="button"
+            className="rounded-md bg-primary px-10 py-4 text-2xl font-bold leading-8 tracking-[0.1px] text-white"
+          >
+            SHOP NOW
+          </button>
+        </div>
+
+        <div className="relative max-lg:-mt-12 flex h-[453px] w-full items-end justify-center lg:ml-auto lg:h-full lg:w-174 lg:flex-none">
+          <div className="absolute bottom-10 left-9 h-[294px] w-[294px] rounded-full bg-white lg:hidden" />
+
+          <div className="absolute left-0 top-32 h-12 w-12 rounded-full bg-white lg:hidden" />
+
+          <div className="absolute left-88 top-39 h-2 w-2 rounded-full bg-[#977DF4] lg:hidden" />
+
+          <div className="absolute left-[14px] top-[330px] z-20 h-[9px] w-[9px] rounded-full bg-[#977DF4] lg:hidden" />
+
+          <div className="absolute left-84 top-58 z-20 h-5 w-5 rounded-full bg-white lg:hidden" />
+
+          <div className="absolute left-31 -top-3 hidden h-125 w-125 rounded-full bg-white lg:block" />
+
+          <div className="absolute left-17 top-0 hidden h-20 w-20 rounded-full bg-white lg:block" />
+
+          <div className="absolute left-166 top-28 hidden h-4 w-4 rounded-full bg-[#977DF4] lg:block" />
+
+          <div className="absolute left-23 top-103 z-20 hidden h-4 w-4 rounded-full bg-[#977DF4] lg:block" />
+
+          <div className="absolute left-160 top-61 z-20 hidden h-8 w-8 rounded-full bg-white lg:block" />
+
+          <img
+            src={heroWoman}
+            alt="Woman"
+            className="relative z-10 w-[410px] max-w-none object-contain lg:w-full"
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSlider;

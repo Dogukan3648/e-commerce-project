@@ -1,4 +1,5 @@
 import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import shopChevronIcon from "../assets/icons/shop-chevron.svg";
 
@@ -6,7 +7,9 @@ const Navbar = () => {
   return (
     <div className="lg:flex lg:h-16 lg:items-center lg:pl-10 lg:pr-4">
       <div className="flex items-center justify-between px-9 py-9 lg:w-48 lg:flex-none lg:p-0">
-        <span className="text-2xl font-bold lg:text-3xl">Bandage</span>
+        <Link to="/" className="text-2xl font-bold lg:text-3xl">
+          Bandage
+        </Link>
 
         <div className="flex items-center gap-6 lg:hidden">
           <button type="button" aria-label="Search">
@@ -26,7 +29,7 @@ const Navbar = () => {
       <nav className="mt-15 lg:ml-20 lg:mt-0">
         <ul className="flex flex-col items-center gap-8 text-muted lg:flex-row lg:gap-8">
           <li className="text-3xl leading-[45px] lg:text-base lg:font-bold lg:leading-6 lg:tracking-[0.2px]">
-            Home
+            <Link to="/">Home</Link>
           </li>
 
           <li className="text-3xl leading-[45px] lg:hidden">Product</li>
