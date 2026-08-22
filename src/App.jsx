@@ -1,7 +1,7 @@
+import Header from "./layout/Header";
+
 function App() {
-  return (
-    <h1 className="text-4xl font-bold text-blue-600">E-Commerce Project</h1>
-  );
+  return <Header />;
 }
 
 export default App;
