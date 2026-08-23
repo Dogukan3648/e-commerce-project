@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <div className="xl:flex xl:h-16 xl:items-center xl:pl-10 xl:pr-4">
       <div className="flex items-center justify-between px-9 py-9 xl:w-48 xl:flex-none xl:p-0">
-        <Link to="/" className="text-2xl font-bold xl:text-3xl">
+        <Link to="/" className="text-2xl font-bold">
           Bandage
         </Link>
 
@@ -26,8 +26,8 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav className="mt-15 xl:ml-20 xl:mt-0">
-        <ul className="flex flex-col items-center gap-8 text-muted xl:flex-row xl:gap-8">
+      <nav className="mt-15 xl:ml-8 xl:mt-0">
+        <ul className="flex flex-col items-center gap-8 text-muted xl:flex-row xl:gap-4">
           <li className="text-3xl leading-[45px] xl:text-base xl:font-bold xl:leading-6 xl:tracking-[0.2px]">
             <Link to="/">Home</Link>
           </li>

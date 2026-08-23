@@ -26,7 +26,7 @@ const ClientsSection = () => {
             <img
               src={client.logo}
               alt={`${client.name} logo`}
-              className="h-auto w-32 xl:w-auto"
+              className="h-auto w-36 xl:w-auto"
             />
           </div>
         ))}
