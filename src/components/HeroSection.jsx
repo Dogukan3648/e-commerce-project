@@ -2,7 +2,7 @@ import heroWoman from "../assets/images/hero-woman.png";
 
 const HeroSection = () => {
   return (
-    <section className="mx-auto mt-20 w-97 max-w-full rounded-2xl bg-linear-to-r from-[#96E9FB] to-[#ABECD6] md:w-4/5 xl:mt-6 xl:w-[90%]">
+    <section className="mx-auto mt-20 w-97 max-w-full rounded-2xl bg-linear-to-r from-[#96E9FB] to-[#ABECD6]  xl:mt-6 xl:w-[90%]">
       <div className="flex flex-col items-center gap-16 pt-20 xl:h-[622px] xl:flex-row xl:gap-0 xl:pt-0">
         <div className="flex w-full flex-col items-center gap-8 text-center xl:min-w-0 xl:flex-1 xl:items-start xl:pl-[clamp(4rem,8vw,10rem)] xl:text-left">
           <span className="text-base font-bold leading-6 tracking-[0.1px] text-[#2A7CC7]">
