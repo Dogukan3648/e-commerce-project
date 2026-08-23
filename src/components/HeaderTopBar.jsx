@@ -1,13 +1,13 @@
 import { Mail, Phone } from "lucide-react";
 
-import facebookIcon from "../assets/icons/facebook.svg";
-import instagramIcon from "../assets/icons/instagram.svg";
-import twitterIcon from "../assets/icons/twitter.svg";
-import youtubeIcon from "../assets/icons/youtube.svg";
+import facebookIcon from "../assets/icons/social/facebook.svg";
+import instagramIcon from "../assets/icons/social/instagram.svg";
+import twitterIcon from "../assets/icons/social/twitter.svg";
+import youtubeIcon from "../assets/icons/social/youtube.svg";
 
 const HeaderTopBar = () => {
   return (
-    <div className="hidden h-[58px] items-center bg-dark text-white lg:flex">
+    <div className="hidden h-[58px] items-center bg-dark text-white xl:flex">
       <div className="flex w-full items-center justify-between px-6">
         <div className="flex items-center gap-2.5">
           <a
