@@ -5,8 +5,8 @@ import shopChevronIcon from "../assets/icons/shop-chevron.svg";
 
 const Navbar = () => {
   return (
-    <div className="pb-24 lg:flex lg:h-14 lg:w-full lg:items-center lg:px-12 lg:pb-0">
-      <div className="flex h-28 items-center justify-between px-9 lg:h-auto lg:px-0">
+    <div className="pb-24 lg:mt-3 lg:flex lg:h-14 lg:w-full lg:items-center lg:pr-5 lg:pl-10 lg:pb-0">
+      <div className="flex h-28 items-center justify-between px-9 lg:h-auto lg:w-47 lg:px-0">
         <Link to="/" className="text-2xl font-bold leading-8">
           Bandage
         </Link>
@@ -26,7 +26,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav className="mt-12 lg:ml-32 lg:mt-0" aria-label="Main navigation">
+      <nav className="mt-12 lg:ml-10 lg:mt-0" aria-label="Main navigation">
         <ul className="flex flex-col items-center gap-8 text-3xl font-normal leading-normal text-muted lg:flex-row lg:gap-4 lg:text-sm lg:font-bold lg:leading-6">
           <li>
             <Link to="/">Home</Link>

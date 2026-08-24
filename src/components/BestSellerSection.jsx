@@ -41,7 +41,7 @@ const BestSellerSection = () => {
 
           <button
             type="button"
-            className="flex h-13 w-65 items-center justify-center rounded-md border border-primary text-sm font-bold leading-6 text-primary lg:w-64 lg:rounded-[5px] lg:leading-[22px]"
+            className="flex h-13 w-64 items-center justify-center rounded-md border border-primary text-sm font-bold leading-6 text-primary"
           >
             LOAD MORE PRODUCTS
           </button>

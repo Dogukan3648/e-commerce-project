@@ -4,7 +4,7 @@ const HeroSection = () => {
   return (
     <section
       aria-labelledby="hero-title"
-      className="mx-3 h-226 overflow-hidden rounded-[20px] bg-linear-to-r from-hero-start to-hero-end lg:mx-auto lg:mt-16 lg:h-156 lg:w-[90%]"
+      className="mx-3 h-226 overflow-hidden rounded-[20px] bg-linear-to-r from-hero-start to-hero-end lg:mx-auto lg:mt-13 lg:mb-13 lg:-translate-x-4 lg:h-156 lg:w-[90%]"
     >
       <div className="flex h-full flex-col items-center gap-16 pt-20 lg:flex-row lg:gap-0 lg:pt-0">
         <div className="flex w-full flex-col items-center gap-8 text-center lg:min-w-0 lg:flex-1 lg:items-start lg:pl-32 lg:text-left">
