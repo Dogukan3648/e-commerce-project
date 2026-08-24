@@ -1,3 +1,4 @@
+import BestSellerSection from "../components/BestSellerSection";
 import ClientsSection from "../components/ClientsSection";
 import HeroSection from "../components/HeroSection";
 import ShopCardsSection from "../components/ShopCardsSection";
@@ -8,6 +9,7 @@ const HomePage = () => {
       <HeroSection />
       <ClientsSection />
       <ShopCardsSection />
+      <BestSellerSection />
     </>
   );
 };
