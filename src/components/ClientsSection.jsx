@@ -6,27 +6,51 @@ import redditLogo from "../assets/icons/brands/reddit.svg";
 import stripeLogo from "../assets/icons/brands/stripe.svg";
 
 const clients = [
-  { name: "Hooli", logo: hooliLogo },
-  { name: "Lyft", logo: lyftLogo },
-  { name: "Pied Piper", logo: piedPiperLogo },
-  { name: "Stripe", logo: stripeLogo },
-  { name: "AWS", logo: awsLogo },
-  { name: "Reddit", logo: redditLogo },
+  {
+    name: "Hooli",
+    logo: hooliLogo,
+    sizeClass: "h-9 w-26",
+  },
+  {
+    name: "Lyft",
+    logo: lyftLogo,
+    sizeClass: "h-15 w-21",
+  },
+  {
+    name: "Pied Piper",
+    logo: piedPiperLogo,
+    sizeClass: "h-19 w-26",
+  },
+  {
+    name: "Stripe",
+    logo: stripeLogo,
+    sizeClass: "h-11 w-26",
+  },
+  {
+    name: "AWS",
+    logo: awsLogo,
+    sizeClass: "h-16 w-26",
+  },
+  {
+    name: "Reddit",
+    logo: redditLogo,
+    sizeClass: "h-18 w-19",
+  },
 ];
 
 const ClientsSection = () => {
   return (
-    <section className="bg-white py-[110px] xl:py-0" aria-label="Our clients">
-      <div className="mx-auto flex w-full flex-col items-center gap-[60px] py-[50px] xl:max-w-[1050px] xl:flex-row xl:gap-[30px]">
+    <section className="h-293 bg-white lg:h-44" aria-label="Our clients">
+      <div className="mx-auto flex h-full w-full flex-col items-center justify-between py-28 lg:max-w-[1440px] lg:flex-row lg:justify-center lg:gap-16 lg:px-12 lg:py-12">
         {clients.map((client) => (
           <div
             key={client.name}
-            className="flex items-center justify-center xl:flex-1"
+            className="flex items-center justify-center lg:flex-1"
           >
             <img
               src={client.logo}
               alt={`${client.name} logo`}
-              className="h-auto w-32 xl:w-auto"
+              className={`${client.sizeClass} object-contain`}
             />
           </div>
         ))}

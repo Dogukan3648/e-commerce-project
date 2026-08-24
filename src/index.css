@@ -5,5 +5,13 @@
   --color-dark: #252b42;
   --color-muted: #737373;
 
+  --color-hover-text: #2a7cc7;
+
+  --color-hero-start: #96e9fb;
+  --color-hero-end: #abecd6;
+  --color-accent-purple: #977df4;
+
+  --color-shop-overlay: #2d8bc0;
+
   --font-sans: "Montserrat", sans-serif;
 }
