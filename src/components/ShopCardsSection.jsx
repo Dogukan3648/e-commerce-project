@@ -5,9 +5,9 @@ import shopTopImage from "../assets/images/shop-top.png";
 const ShopCardsSection = () => {
   return (
     <section className="bg-white" aria-label="Featured products">
-      <div className="mx-auto w-5/6 max-w-xl py-6 lg:max-w-[1185px] lg:-translate-x-10 lg:py-20">
+      <div className="mx-auto w-5/6 py-6 lg:max-w-[1185px] lg:-translate-x-10 lg:py-20">
         <div className="flex flex-col gap-4 lg:h-143 lg:flex-row">
-          <div className="relative h-139 lg:h-full lg:w-153">
+          <div className="relative h-139 lg:h-full lg:w-[52%]">
             <img
               src={shopMainImage}
               alt=""
