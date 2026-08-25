@@ -1,4 +1,4 @@
-import blogPosts from "../data/blogPosts";
+import blogPosts from "../../../data/home/blogPosts";
 import DesktopBlogCard from "./DesktopBlogCard";
 import MobileBlogCard from "./MobileBlogCard";
 

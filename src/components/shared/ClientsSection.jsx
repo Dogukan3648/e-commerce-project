@@ -1,4 +1,4 @@
-import clients from "../data/clients";
+import clients from "../../data/shared/clients";
 
 const ClientsSection = () => {
   return (

@@ -1,10 +1,10 @@
-import BestSellerSection from "../components/BestSellerSection";
-import BlogSection from "../components/BlogSection";
-import ClientsSection from "../components/ClientsSection";
-import FeaturedProductsSection from "../components/FeaturedProductsSection";
-import FeaturesSection from "../components/FeaturesSection";
-import HeroSection from "../components/HeroSection";
-import ShopCardsSection from "../components/ShopCardsSection";
+import BestSellerSection from "../components/home/BestSellerSection";
+import BlogSection from "../components/home/blog/BlogSection";
+import FeaturedProductsSection from "../components/home/FeaturedProductsSection";
+import FeaturesSection from "../components/home/FeaturesSection";
+import HeroSection from "../components/home/HeroSection";
+import ShopCardsSection from "../components/home/ShopCardsSection";
+import ClientsSection from "../components/shared/ClientsSection";
 
 const HomePage = () => {
   return (

@@ -1,5 +1,5 @@
-import bestsellerProducts from "../data/bestSellerProducts";
-import ProductCard from "./ProductCard";
+import bestsellerProducts from "../../data/home/bestSellerProducts";
+import ProductCard from "../product/ProductCard";
 
 const BestSellerSection = () => {
   return (
