@@ -1,7 +1,7 @@
 import facebookIcon from "../assets/icons/social/footer-facebook.svg";
 import instagramIcon from "../assets/icons/social/footer-instagram.svg";
 import twitterIcon from "../assets/icons/social/footer-twitter.svg";
-import footerLinks from "../data/footerLinks";
+import footerLinks from "../data/shared/footerLinks";
 
 const Footer = () => {
   return (

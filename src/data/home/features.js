@@ -1,6 +1,6 @@
-import concreteIcon from "../assets/icons/features/concrete.svg";
-import easyWinsIcon from "../assets/icons/features/easy-wins.svg";
-import hackGrowthIcon from "../assets/icons/features/hack-growth.svg";
+import concreteIcon from "../../assets/icons/features/concrete.svg";
+import easyWinsIcon from "../../assets/icons/features/easy-wins.svg";
+import hackGrowthIcon from "../../assets/icons/features/hack-growth.svg";
 
 const features = [
   {

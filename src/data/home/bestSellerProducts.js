@@ -1,13 +1,13 @@
-import bestseller01 from "../assets/images/products/bestseller-01.png";
-import bestseller02 from "../assets/images/products/bestseller-02.png";
-import bestseller03 from "../assets/images/products/bestseller-03.png";
-import bestseller04 from "../assets/images/products/bestseller-04.png";
-import bestseller05 from "../assets/images/products/bestseller-05.png";
-import bestseller06 from "../assets/images/products/bestseller-06.png";
-import bestseller07 from "../assets/images/products/bestseller-07.png";
-import bestseller08 from "../assets/images/products/bestseller-08.png";
-import bestseller09 from "../assets/images/products/bestseller-09.png";
-import bestseller10 from "../assets/images/products/bestseller-10.png";
+import bestseller01 from "../../assets/images/products/bestseller-01.png";
+import bestseller02 from "../../assets/images/products/bestseller-02.png";
+import bestseller03 from "../../assets/images/products/bestseller-03.png";
+import bestseller04 from "../../assets/images/products/bestseller-04.png";
+import bestseller05 from "../../assets/images/products/bestseller-05.png";
+import bestseller06 from "../../assets/images/products/bestseller-06.png";
+import bestseller07 from "../../assets/images/products/bestseller-07.png";
+import bestseller08 from "../../assets/images/products/bestseller-08.png";
+import bestseller09 from "../../assets/images/products/bestseller-09.png";
+import bestseller10 from "../../assets/images/products/bestseller-10.png";
 
 const bestsellerProducts = [
   {

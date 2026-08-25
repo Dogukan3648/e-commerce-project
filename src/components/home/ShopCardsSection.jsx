@@ -1,6 +1,6 @@
-import shopBottomImage from "../assets/images/shop-bottom.png";
-import shopMainImage from "../assets/images/shop-main.png";
-import shopTopImage from "../assets/images/shop-top.png";
+import shopBottomImage from "../../assets/images/home/shop-cards/shop-bottom.png";
+import shopMainImage from "../../assets/images/home/shop-cards/shop-main.png";
+import shopTopImage from "../../assets/images/home/shop-cards/shop-top.png";
 
 const ShopCardsSection = () => {
   return (

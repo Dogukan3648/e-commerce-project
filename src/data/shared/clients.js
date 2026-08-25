@@ -1,9 +1,9 @@
-import awsLogo from "../assets/icons/brands/aws.svg";
-import hooliLogo from "../assets/icons/brands/hooli.svg";
-import lyftLogo from "../assets/icons/brands/lyft.svg";
-import piedPiperLogo from "../assets/icons/brands/pied-piper.svg";
-import redditLogo from "../assets/icons/brands/reddit.svg";
-import stripeLogo from "../assets/icons/brands/stripe.svg";
+import awsLogo from "../../assets/icons/brands/aws.svg";
+import hooliLogo from "../../assets/icons/brands/hooli.svg";
+import lyftLogo from "../../assets/icons/brands/lyft.svg";
+import piedPiperLogo from "../../assets/icons/brands/pied-piper.svg";
+import redditLogo from "../../assets/icons/brands/reddit.svg";
+import stripeLogo from "../../assets/icons/brands/stripe.svg";
 
 const clients = [
   {

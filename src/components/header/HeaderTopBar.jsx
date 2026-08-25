@@ -1,9 +1,9 @@
 import { Mail, Phone } from "lucide-react";
 
-import facebookIcon from "../assets/icons/social/facebook.svg";
-import instagramIcon from "../assets/icons/social/instagram.svg";
-import twitterIcon from "../assets/icons/social/twitter.svg";
-import youtubeIcon from "../assets/icons/social/youtube.svg";
+import facebookIcon from "../../assets/icons/social/facebook.svg";
+import instagramIcon from "../../assets/icons/social/instagram.svg";
+import twitterIcon from "../../assets/icons/social/twitter.svg";
+import youtubeIcon from "../../assets/icons/social/youtube.svg";
 
 const HeaderTopBar = () => {
   return (

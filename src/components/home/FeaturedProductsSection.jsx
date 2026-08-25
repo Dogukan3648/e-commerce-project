@@ -1,6 +1,5 @@
-import featuredProductsLeft from "../assets/images/featured-products-left.png";
-import featuredProductsRight from "../assets/images/featured-products-right.png";
-
+import featuredProductsLeft from "../../assets/images/home/featured-products/featured-products-left.png";
+import featuredProductsRight from "../../assets/images/home/featured-products/featured-products-right.png";
 const FeaturedProductsSection = () => {
   return (
     <section className="bg-white">

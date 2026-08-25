@@ -1,7 +1,7 @@
 import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import shopChevronIcon from "../assets/icons/shop-chevron.svg";
+import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
 
 const Navbar = () => {
   return (
