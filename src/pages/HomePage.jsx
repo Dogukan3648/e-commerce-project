@@ -1,4 +1,5 @@
 import BestSellerSection from "../components/BestSellerSection";
+import BlogSection from "../components/BlogSection";
 import ClientsSection from "../components/ClientsSection";
 import FeaturedProductsSection from "../components/FeaturedProductsSection";
 import FeaturesSection from "../components/FeaturesSection";
@@ -14,6 +15,7 @@ const HomePage = () => {
       <BestSellerSection />
       <FeaturedProductsSection />
       <FeaturesSection />
+      <BlogSection />
     </>
   );
 };
