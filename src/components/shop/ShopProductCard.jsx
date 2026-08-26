@@ -1,6 +1,11 @@
-const ShopProductCard = ({ image }) => {
+import { Link } from "react-router-dom";
+
+const ShopProductCard = ({ id, image }) => {
   return (
-    <article className="flex w-87 flex-col overflow-hidden bg-white lg:w-60">
+    <Link
+      to={`/product/${id}`}
+      className="flex w-87 flex-col overflow-hidden bg-white lg:w-60"
+    >
       <img src={image} alt="" className="h-107 w-full object-cover lg:h-75" />
 
       <div className="flex h-47 flex-col items-center gap-2.5 px-6 pt-6 pb-9">
@@ -24,7 +29,7 @@ const ShopProductCard = ({ image }) => {
           <span className="size-4 rounded-full bg-dark" />
         </div>
       </div>
-    </article>
+    </Link>
   );
 };
 

@@ -18,13 +18,18 @@ const ShopProductsSection = () => {
             <ShopProductCard
               key={`${product.id}-${index}`}
               image={product.image}
+              id={product.id}
             />
           ))}
         </div>
 
         <div className="hidden w-[1050px] flex-wrap gap-x-[30px] gap-y-12 lg:flex">
           {shopProducts.map((product) => (
-            <ShopProductCard key={product.id} image={product.image} />
+            <ShopProductCard
+              key={product.id}
+              image={product.image}
+              id={product.id}
+            />
           ))}
         </div>
 
