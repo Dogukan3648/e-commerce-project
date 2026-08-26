@@ -6,7 +6,7 @@ import footerLinks from "../data/shared/footerLinks";
 const Footer = () => {
   return (
     <footer className="bg-white">
-      <div className="relative h-43 bg-[#FAFAFA] lg:h-36">
+      <div className="relative h-43 bg-light-gray lg:h-36">
         <div className="mx-auto flex h-full w-full flex-col justify-center gap-3 px-11 lg:w-263 lg:flex-row lg:items-center lg:justify-between lg:px-0">
           <div className="flex h-15 w-59 items-center">
             <p className="text-2xl font-bold leading-8 text-dark">Bandage</p>

@@ -37,7 +37,9 @@ const Navbar = () => {
           <li className="lg:hidden">Pricing</li>
 
           <li className="hidden items-center gap-2 px-1.5 lg:flex">
-            <span className="font-medium text-dark">Shop</span>
+            <Link to="/shop" className="font-medium text-dark">
+              Shop
+            </Link>
             <img src={shopChevronIcon} alt="" className="h-2.5 w-1.5" />
           </li>
 

@@ -3,7 +3,7 @@ import features from "../../data/home/features";
 const FeaturesSection = () => {
   return (
     <section className="bg-white">
-      <div className="mx-auto flex w-full flex-col items-center gap-20 py-20 xl:w-263">
+      <div className="mx-auto flex w-full flex-col items-center gap-20 py-20 lg:max-w-263">
         <div className="flex w-3/5 flex-col items-center gap-2.5 text-center lg:w-173">
           <p className="text-xl leading-8 text-muted">Featured Products</p>
 
@@ -16,7 +16,7 @@ const FeaturesSection = () => {
           </p>
         </div>
 
-        <div className="flex w-4/5 flex-col items-center gap-8 lg:w-full lg:flex-row lg:justify-center lg:gap-7 xl:gap-11">
+        <div className="flex w-4/5 flex-col items-center gap-8 lg:w-full lg:flex-row lg:justify-center lg:gap-8">
           {features.map((feature) => (
             <div
               key={feature.title}

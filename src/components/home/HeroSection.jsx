@@ -1,4 +1,5 @@
 import heroWoman from "../../assets/images/home/hero/hero-woman.png";
+
 const HeroSection = () => {
   return (
     <section className="mx-[13px] mt-4 h-[902px] overflow-hidden rounded-[20px] bg-linear-to-r from-hero-start to-hero-end lg:mx-auto lg:mt-6 lg:mb-13 lg:h-[622px] lg:w-[90%] lg:overflow-visible">
