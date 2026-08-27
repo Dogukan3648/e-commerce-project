@@ -1,9 +1,9 @@
 import clients from "../../data/shared/clients";
 
-const ClientsSection = ({ backgroundClass = "bg-white" }) => {
+const ClientsSection = () => {
   return (
     <section
-      className={`flex h-293 items-center ${backgroundClass} lg:h-44`}
+      className="flex h-293 items-center bg-white lg:h-44"
       aria-label="Our clients"
     >
       <div className="mx-auto flex w-full flex-col items-center gap-15 py-12 lg:max-w-[1050px] lg:flex-row lg:gap-8">

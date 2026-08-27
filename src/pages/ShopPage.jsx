@@ -11,7 +11,7 @@ const ShopPage = () => {
       <ShopCategoriesSection />
       <ShopFilterBar />
       <ShopProductsSection />
-      <ClientsSection backgroundClass="bg-light-gray" />
+      <ClientsSection />
     </>
   );
 };
