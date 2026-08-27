@@ -51,6 +51,10 @@ const Navbar = () => {
             <Link to="/contact">Contact</Link>
           </li>
 
+          <li>
+            <Link to="/team">Team</Link>
+          </li>
+
           <li className="hidden lg:block">Pages</li>
         </ul>
       </nav>
