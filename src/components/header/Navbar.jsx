@@ -47,7 +47,9 @@ const Navbar = () => {
 
           <li className="hidden lg:block">Blog</li>
 
-          <li>Contact</li>
+          <li>
+            <Link to="/contact">Contact</Link>
+          </li>
 
           <li className="hidden lg:block">Pages</li>
         </ul>
