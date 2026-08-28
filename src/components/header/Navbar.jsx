@@ -43,7 +43,9 @@ const Navbar = () => {
             <img src={shopChevronIcon} alt="" className="h-2.5 w-1.5" />
           </li>
 
-          <li className="hidden lg:block">About</li>
+          <li className="hidden lg:block">
+            <Link to="/about">About</Link>
+          </li>
 
           <li className="hidden lg:block">Blog</li>
 
