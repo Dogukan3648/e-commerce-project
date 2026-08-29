@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { ChevronDown, LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiClient from "../../api/apiClient";
+import { fetchRoles } from "../../store/actions/clientActions";
 import StoreFields from "./StoreFields";
-
-import { ChevronDown, LoaderCircle } from "lucide-react";
 
 const SignupForm = () => {
   const {
@@ -18,30 +19,25 @@ const SignupForm = () => {
     shouldUnregister: true,
   });
 
-  const [roles, setRoles] = useState([]);
+  const dispatch = useDispatch();
+
+  const roles = useSelector((state) => state.client.roles);
 
   const history = useHistory();
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await apiClient.get("/roles");
+    if (roles.length === 0) {
+      dispatch(fetchRoles());
+    }
+  }, [dispatch, roles.length]);
 
-        setRoles(response.data);
+  useEffect(() => {
+    const customerRole = roles.find((role) => role.code === "customer");
 
-        const customerRole = response.data.find(
-          (role) => role.code === "customer",
-        );
-
-        if (customerRole) {
-          setValue("role_id", customerRole.id);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchRoles();
-  }, [setValue]);
+    if (customerRole) {
+      setValue("role_id", customerRole.id);
+    }
+  }, [roles, setValue]);
 
   const selectedRoleId = watch("role_id");
 
