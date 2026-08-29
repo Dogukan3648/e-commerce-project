@@ -62,13 +62,13 @@ const Navbar = () => {
       </nav>
 
       <div className="ml-auto hidden shrink-0 items-center text-primary lg:flex">
-        <button
-          type="button"
+        <Link
+          to="/signup"
           className="flex items-center gap-1 rounded-full p-4 text-sm font-bold leading-6"
         >
           <User size={12} />
           <span className="whitespace-nowrap">Login / Register</span>
-        </button>
+        </Link>
 
         <button type="button" aria-label="Search" className="rounded-full p-4">
           <Search size={16} />

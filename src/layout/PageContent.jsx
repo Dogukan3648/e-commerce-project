@@ -4,6 +4,7 @@ import ContactPage from "../pages/ContactPage";
 import HomePage from "../pages/HomePage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ShopPage from "../pages/ShopPage";
+import SignupPage from "../pages/SignupPage";
 import TeamPage from "../pages/TeamPage";
 
 const PageContent = () => {
@@ -15,6 +16,7 @@ const PageContent = () => {
       <Route path="/contact" component={ContactPage} />
       <Route path="/team" component={TeamPage} />
       <Route path="/about" component={AboutPage} />
+      <Route path="/signup" component={SignupPage} />
     </Switch>
   );
 };
