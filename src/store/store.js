@@ -17,8 +17,12 @@ const rootReducer = combineReducers({
   shoppingCart: shoppingCartReducer,
 });
 
-const logger = createLogger();
+const middlewares = [thunk];
 
-const store = createStore(rootReducer, applyMiddleware(thunk, logger));
+if (import.meta.env.DEV) {
+  middlewares.push(createLogger());
+}
+
+const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
 export default store;

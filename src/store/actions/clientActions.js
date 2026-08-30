@@ -27,8 +27,11 @@ export const fetchRoles = () => async (dispatch, getState) => {
   if (roles.length > 0) {
     return;
   }
+  try {
+    const response = await apiClient.get("/roles");
 
-  const response = await apiClient.get("/roles");
-
-  dispatch(setRoles(response.data));
+    dispatch(setRoles(response.data));
+  } catch (error) {
+    console.error("Failed to fetch roles:", error);
+  }
 };
