@@ -35,3 +35,22 @@ export const fetchRoles = () => async (dispatch, getState) => {
     console.error("Failed to fetch roles:", error);
   }
 };
+
+export const loginUser =
+  ({ email, password, rememberMe }) =>
+  async (dispatch) => {
+    const response = await apiClient.post("/login", {
+      email,
+      password,
+    });
+
+    const { token, ...user } = response.data;
+
+    dispatch(setUser(user));
+
+    if (rememberMe) {
+      localStorage.setItem("token", token);
+    }
+
+    return user;
+  };

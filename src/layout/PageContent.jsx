@@ -2,6 +2,7 @@ import { Route, Switch } from "react-router-dom";
 import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
 import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ShopPage from "../pages/ShopPage";
 import SignupPage from "../pages/SignupPage";
@@ -17,6 +18,7 @@ const PageContent = () => {
       <Route path="/team" component={TeamPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/signup" component={SignupPage} />
+      <Route path="/login" component={LoginPage} />
     </Switch>
   );
 };

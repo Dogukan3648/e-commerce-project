@@ -1,9 +1,62 @@
 import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
 
 import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
 
+const getGravatarUrl = async (email) => {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const encodedEmail = new TextEncoder().encode(normalizedEmail);
+
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encodedEmail);
+
+  const hash = Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+
+  return `https://www.gravatar.com/avatar/${hash}?s=32&d=mp`;
+};
+
 const Navbar = () => {
+  const [avatar, setAvatar] = useState({
+    email: "",
+    url: "",
+  });
+
+  const user = useSelector((state) => state.client.user);
+
+  const location = useLocation();
+
+  const from =
+    location.pathname === "/login"
+      ? "/"
+      : `${location.pathname}${location.search}${location.hash}`;
+
+  useEffect(() => {
+    if (!user.email) {
+      return;
+    }
+
+    let isCurrent = true;
+
+    getGravatarUrl(user.email).then((url) => {
+      if (isCurrent) {
+        setAvatar({
+          email: user.email,
+          url,
+        });
+      }
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [user.email]);
+
+  const avatarUrl = avatar.email === user.email ? avatar.url : "";
+
   return (
     <div className="pb-24 lg:mt-3 lg:flex lg:h-14 lg:w-full lg:items-center lg:pr-5 lg:pl-10 lg:pb-0">
       <div className="flex h-28 items-center justify-between px-9 lg:h-auto lg:w-47 lg:px-0">
@@ -62,13 +115,36 @@ const Navbar = () => {
       </nav>
 
       <div className="ml-auto hidden shrink-0 items-center text-primary lg:flex">
-        <Link
-          to="/signup"
-          className="flex items-center gap-1 rounded-full p-4 text-sm font-bold leading-6"
-        >
-          <User size={12} />
-          <span className="whitespace-nowrap">Login / Register</span>
-        </Link>
+        {user.email ? (
+          <div className="flex items-center gap-2 rounded-full p-4 text-sm font-bold leading-6">
+            {avatarUrl && (
+              <img
+                src={avatarUrl}
+                alt={`${user.name} avatar`}
+                className="h-8 w-8 rounded-full"
+              />
+            )}
+
+            <span className="whitespace-nowrap">{user.name}</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 rounded-full p-4 text-sm font-bold leading-6">
+            <User size={12} />
+
+            <Link
+              to={{
+                pathname: "/login",
+                state: { from },
+              }}
+            >
+              Login
+            </Link>
+
+            <span>/</span>
+
+            <Link to="/signup">Register</Link>
+          </div>
+        )}
 
         <button type="button" aria-label="Search" className="rounded-full p-4">
           <Search size={16} />
