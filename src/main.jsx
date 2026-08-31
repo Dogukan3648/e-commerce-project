@@ -4,7 +4,10 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
+import { verifyToken } from "./store/actions/clientActions.js";
 import store from "./store/store.js";
+
+store.dispatch(verifyToken());
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

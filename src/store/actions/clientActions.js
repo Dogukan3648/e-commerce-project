@@ -48,9 +48,41 @@ export const loginUser =
 
     dispatch(setUser(user));
 
+    apiClient.defaults.headers.common.Authorization = token;
+
     if (rememberMe) {
       localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
     }
 
     return user;
   };
+
+export const verifyToken = () => async (dispatch) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return;
+  }
+
+  apiClient.defaults.headers.common.Authorization = token;
+
+  try {
+    const response = await apiClient.get("/verify");
+
+    const { token: renewedToken, ...user } = response.data;
+
+    dispatch(setUser(user));
+
+    localStorage.setItem("token", renewedToken);
+    apiClient.defaults.headers.common.Authorization = renewedToken;
+
+    return user;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      delete apiClient.defaults.headers.common.Authorization;
+    }
+  }
+};
