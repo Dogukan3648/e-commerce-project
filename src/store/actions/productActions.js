@@ -1,3 +1,4 @@
+import apiClient from "../../api/apiClient";
 import {
   SET_CATEGORIES,
   SET_FETCH_STATE,
@@ -7,6 +8,8 @@ import {
   SET_PRODUCT_LIST,
   SET_TOTAL,
 } from "../actionTypes";
+
+let categoriesRequest = null;
 
 export const setCategories = (categories) => ({
   type: SET_CATEGORIES,
@@ -42,3 +45,26 @@ export const setFilter = (filter) => ({
   type: SET_FILTER,
   payload: filter,
 });
+
+export const fetchCategories = () => async (dispatch, getState) => {
+  const { categories } = getState().product;
+
+  if (categories.length > 0) {
+    return;
+  }
+  if (!categoriesRequest) {
+    categoriesRequest = apiClient.get("/categories");
+  }
+
+  try {
+    const response = await categoriesRequest;
+
+    if (getState().product.categories.length === 0) {
+      dispatch(setCategories(response.data));
+    }
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  } finally {
+    categoriesRequest = null;
+  }
+};

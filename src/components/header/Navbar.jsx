@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 
 import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
+import { getCategoryPath } from "../../utils/categoryUtils";
 
 const getGravatarUrl = async (email) => {
   const normalizedEmail = email.trim().toLowerCase();
@@ -26,6 +27,15 @@ const Navbar = () => {
   });
 
   const user = useSelector((state) => state.client.user);
+  const categories = useSelector((state) => state.product.categories);
+
+  const womenCategories = categories.filter(
+    (category) => category.gender === "k",
+  );
+
+  const menCategories = categories.filter(
+    (category) => category.gender === "e",
+  );
 
   const location = useLocation();
 
@@ -85,15 +95,51 @@ const Navbar = () => {
             <Link to="/">Home</Link>
           </li>
 
-          <li className="lg:hidden">Product</li>
+          <li className="lg:hidden">
+            <Link to="/shop">Product</Link>
+          </li>
 
           <li className="lg:hidden">Pricing</li>
 
-          <li className="hidden items-center gap-2 px-1.5 lg:flex">
-            <Link to="/shop" className="font-medium text-dark">
-              Shop
-            </Link>
-            <img src={shopChevronIcon} alt="" className="h-2.5 w-1.5" />
+          <li className="group relative hidden lg:block">
+            <div className="flex items-center gap-2 px-1.5">
+              <Link to="/shop" className="font-medium text-dark">
+                Shop
+              </Link>
+              <img src={shopChevronIcon} alt="" className="h-2.5 w-1.5" />
+            </div>
+
+            <div className="absolute left-0 top-full z-50 hidden pt-4 group-hover:block group-focus-within:block">
+              <div className="flex w-72 gap-12 bg-white px-6 py-5 shadow-md">
+                <div className="flex flex-1 flex-col gap-3">
+                  <span className="font-bold text-dark">Kadın</span>
+
+                  {womenCategories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={getCategoryPath(category)}
+                      className="font-medium text-muted hover:text-primary"
+                    >
+                      {category.title}
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="flex flex-1 flex-col gap-3">
+                  <span className="font-bold text-dark">Erkek</span>
+
+                  {menCategories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={getCategoryPath(category)}
+                      className="font-medium text-muted hover:text-primary"
+                    >
+                      {category.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </li>
 
           <li className="hidden lg:block">
