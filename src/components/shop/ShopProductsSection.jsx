@@ -1,20 +1,25 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import ShopPagination from "./ShopPagination";
 import ShopProductCard from "./ShopProductCard";
 
 import { fetchProducts } from "../../store/actions/productActions";
 
 const ShopProductsSection = () => {
+  const { categoryId } = useParams();
+
   const dispatch = useDispatch();
 
-  const { productList, fetchState } = useSelector((state) => state.product);
+  const { productList, fetchState, filter, sort } = useSelector(
+    (state) => state.product,
+  );
 
   const mobileProducts = productList.slice(0, 4);
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    dispatch(fetchProducts(categoryId));
+  }, [dispatch, categoryId, filter, sort]);
 
   if (fetchState === "FETCHING") {
     return (
