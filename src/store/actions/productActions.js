@@ -68,3 +68,23 @@ export const fetchCategories = () => async (dispatch, getState) => {
     categoriesRequest = null;
   }
 };
+
+export const fetchProducts = () => async (dispatch, getState) => {
+  const { fetchState } = getState().product;
+
+  if (fetchState === "FETCHING") {
+    return;
+  }
+  dispatch(setFetchState("FETCHING"));
+
+  try {
+    const response = await apiClient.get("/products");
+
+    dispatch(setProductList(response.data.products));
+    dispatch(setTotal(response.data.total));
+    dispatch(setFetchState("FETCHED"));
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    dispatch(setFetchState("NOT_FETCHED"));
+  }
+};
