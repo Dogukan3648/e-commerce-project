@@ -78,7 +78,7 @@ export const fetchCategories = () => async (dispatch, getState) => {
 
 export const fetchProducts = (categoryId) => async (dispatch, getState) => {
   const requestId = ++productRequestId;
-  const { filter, sort } = getState().product;
+  const { filter, sort, limit, offset } = getState().product;
 
   const params = {};
 
@@ -91,6 +91,9 @@ export const fetchProducts = (categoryId) => async (dispatch, getState) => {
   if (sort) {
     params.sort = sort;
   }
+
+  params.limit = limit;
+  params.offset = offset;
 
   dispatch(setFetchState("FETCHING"));
 

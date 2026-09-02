@@ -1,25 +1,38 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ShopPagination from "./ShopPagination";
 import ShopProductCard from "./ShopProductCard";
 
-import { fetchProducts } from "../../store/actions/productActions";
+import { fetchProducts, setOffset } from "../../store/actions/productActions";
 
 const ShopProductsSection = () => {
   const { categoryId } = useParams();
 
   const dispatch = useDispatch();
 
-  const { productList, fetchState, filter, sort } = useSelector(
+  const { productList, fetchState, filter, sort, limit, offset } = useSelector(
     (state) => state.product,
   );
 
   const mobileProducts = productList.slice(0, 4);
 
+  const previousQuery = useRef({ categoryId, filter, sort });
+
   useEffect(() => {
+    const queryChanged =
+      previousQuery.current.categoryId !== categoryId ||
+      previousQuery.current.filter !== filter ||
+      previousQuery.current.sort !== sort;
+
+    previousQuery.current = { categoryId, filter, sort };
+
+    if (queryChanged && offset !== 0) {
+      dispatch(setOffset(0));
+      return;
+    }
     dispatch(fetchProducts(categoryId));
-  }, [dispatch, categoryId, filter, sort]);
+  }, [dispatch, categoryId, filter, sort, limit, offset]);
 
   if (fetchState === "FETCHING") {
     return (
