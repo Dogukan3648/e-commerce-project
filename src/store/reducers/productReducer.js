@@ -1,9 +1,12 @@
 import {
+  SET_BESTSELLER_PRODUCTS,
   SET_CATEGORIES,
   SET_FETCH_STATE,
   SET_FILTER,
   SET_LIMIT,
   SET_OFFSET,
+  SET_PRODUCT,
+  SET_PRODUCT_FETCH_STATE,
   SET_PRODUCT_LIST,
   SET_SORT,
   SET_TOTAL,
@@ -18,6 +21,9 @@ const initialState = {
   filter: "",
   sort: "",
   fetchState: "NOT_FETCHED",
+  product: null,
+  productFetchState: "NOT_FETCHED",
+  bestsellerProducts: [],
 };
 
 const productReducer = (state = initialState, action) => {
@@ -63,6 +69,21 @@ const productReducer = (state = initialState, action) => {
       return {
         ...state,
         fetchState: action.payload,
+      };
+    case SET_PRODUCT:
+      return {
+        ...state,
+        product: action.payload,
+      };
+    case SET_PRODUCT_FETCH_STATE:
+      return {
+        ...state,
+        productFetchState: action.payload,
+      };
+    case SET_BESTSELLER_PRODUCTS:
+      return {
+        ...state,
+        bestsellerProducts: action.payload,
       };
 
     default:

@@ -1,30 +1,23 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { productGallery } from "../../data/product-detail/productGallery";
 
-const ProductGallery = () => {
+const ProductGallery = ({ product }) => {
+  const images = product?.images ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handlePrevious = () => {
     setActiveIndex((currentIndex) =>
-      currentIndex === 0
-        ? productGallery.thumbnails.length - 1
-        : currentIndex - 1,
+      currentIndex === 0 ? images.length - 1 : currentIndex - 1,
     );
   };
 
   const handleNext = () => {
     setActiveIndex((currentIndex) =>
-      currentIndex === productGallery.thumbnails.length - 1
-        ? 0
-        : currentIndex + 1,
+      currentIndex === images.length - 1 ? 0 : currentIndex + 1,
     );
   };
 
-  const activeImage =
-    activeIndex === 0
-      ? productGallery.mainImage
-      : productGallery.thumbnails[activeIndex].image;
+  const activeImage = images[activeIndex]?.url ?? "";
 
   return (
     <div className="flex w-87 flex-col lg:w-126.5">
@@ -35,26 +28,30 @@ const ProductGallery = () => {
           className="h-full w-full object-cover"
         />
 
-        <button
-          type="button"
-          onClick={handlePrevious}
-          className="absolute top-1/2 left-10 -translate-y-1/2 text-white"
-        >
-          <ChevronLeft size={44} />
-        </button>
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="absolute top-1/2 left-10 -translate-y-1/2 text-white"
+            >
+              <ChevronLeft size={44} />
+            </button>
 
-        <button
-          type="button"
-          onClick={handleNext}
-          className="absolute top-1/2 right-9 -translate-y-1/2 text-white"
-        >
-          <ChevronRight size={44} />
-        </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="absolute top-1/2 right-9 -translate-y-1/2 text-white"
+            >
+              <ChevronRight size={44} />
+            </button>
+          </>
+        )}
       </div>
       <div className="mt-10 flex gap-5 lg:mt-5">
-        {productGallery.thumbnails.map((thumbnail, index) => (
+        {images.map((image, index) => (
           <button
-            key={thumbnail.id}
+            key={image.index}
             type="button"
             onClick={() => setActiveIndex(index)}
             className={`h-19 w-25 overflow-hidden ${
@@ -62,7 +59,7 @@ const ProductGallery = () => {
             }`}
           >
             <img
-              src={thumbnail.image}
+              src={image.url}
               alt=""
               className="h-full w-full object-cover"
             />

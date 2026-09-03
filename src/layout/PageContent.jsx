@@ -14,10 +14,15 @@ const PageContent = () => {
       <Route exact path="/" component={HomePage} />
       <Route exact path="/shop" component={ShopPage} />
       <Route
+        exact
         path="/shop/:gender/:categoryName/:categoryId"
         component={ShopPage}
       />
-      <Route path="/product/:id" component={ProductDetailPage} />
+      <Route
+        exact
+        path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId"
+        component={ProductDetailPage}
+      />
       <Route path="/contact" component={ContactPage} />
       <Route path="/team" component={TeamPage} />
       <Route path="/about" component={AboutPage} />

@@ -1,14 +1,24 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { createSlug, getCategoryPath } from "../../utils/categoryUtils";
 
 const ShopProductCard = ({ product }) => {
-  const { id, name, description, price, images } = product;
+  const { id, name, description, price, images, category_id } = product;
+
+  const categories = useSelector((state) => state.product.categories);
+
+  const category = categories.find((item) => item.id === category_id);
+
+  const productPath = category
+    ? `${getCategoryPath(category)}/${createSlug(name)}/${id}`
+    : "#";
 
   const imageUrl =
     images?.find((image) => image.index === 0)?.url ?? images?.[0]?.url ?? "";
   return (
     <Link
-      to={`/product/${id}`}
-      className="flex w-87 flex-col overflow-hidden bg-white lg:w-60"
+      to={productPath}
+      className="flex w-87 cursor-pointer flex-col overflow-hidden bg-white transition-transform hover:-translate-y-1 lg:w-60"
     >
       <img
         src={imageUrl}

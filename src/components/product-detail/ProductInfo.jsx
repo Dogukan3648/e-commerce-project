@@ -1,11 +1,21 @@
 import { Eye, Heart, ShoppingCart, Star } from "lucide-react";
-import { productInfo } from "../../data/product-detail/productInfo";
 
-const ProductInfo = () => {
+const ProductInfo = ({ product }) => {
+  const {
+    name,
+    description,
+    price,
+    stock,
+    rating,
+    sell_count: sellCount,
+  } = product;
+
+  const isInStock = stock > 0;
+
   return (
     <div className="flex h-118 w-87 flex-col pl-6 lg:w-127.5">
       <h2 className="mt-2.5 text-xl font-normal leading-7.5 tracking-[0.2px] text-dark">
-        {productInfo.title}
+        {name}
       </h2>
 
       <div className="mt-3 flex items-center gap-2.5">
@@ -15,7 +25,7 @@ const ProductInfo = () => {
               key={star}
               size={22}
               className={
-                star <= productInfo.rating
+                star <= Math.round(rating)
                   ? "fill-[#F3CD03] text-[#F3CD03]"
                   : "text-[#F3CD03]"
               }
@@ -24,21 +34,23 @@ const ProductInfo = () => {
         </div>
 
         <span className="text-sm font-bold leading-6 tracking-[0.2px] text-muted">
-          {productInfo.reviews} Reviews
+          {sellCount} Sales
         </span>
       </div>
 
       <p className="mt-5.5 text-2xl font-bold leading-8 tracking-[0.1px] text-dark">
-        {productInfo.price}
+        ${price.toFixed(2)}
       </p>
 
       <div className="mt-1 flex items-center gap-1.25 text-sm font-bold leading-6 tracking-[0.2px]">
         <span className="text-muted">Availability :</span>
-        <span className="text-primary">{productInfo.availability}</span>
+        <span className="text-primary">
+          {isInStock ? `In Stock (${stock})` : "Out of Stock"}
+        </span>
       </div>
 
       <p className="mt-8 w-68 text-sm font-normal leading-5 tracking-[0.2px] text-[#858585] lg:w-116">
-        {productInfo.description}
+        {description}
       </p>
 
       <div className="mt-4 ml-1.25 h-px w-71 bg-soft-gray lg:mt-7 lg:ml-0 lg:w-111" />

@@ -1,10 +1,13 @@
 import apiClient from "../../api/apiClient";
 import {
+  SET_BESTSELLER_PRODUCTS,
   SET_CATEGORIES,
   SET_FETCH_STATE,
   SET_FILTER,
   SET_LIMIT,
   SET_OFFSET,
+  SET_PRODUCT,
+  SET_PRODUCT_FETCH_STATE,
   SET_PRODUCT_LIST,
   SET_SORT,
   SET_TOTAL,
@@ -51,6 +54,21 @@ export const setOffset = (offset) => ({
 export const setFilter = (filter) => ({
   type: SET_FILTER,
   payload: filter,
+});
+
+export const setProduct = (product) => ({
+  type: SET_PRODUCT,
+  payload: product,
+});
+
+export const setProductFetchState = (fetchState) => ({
+  type: SET_PRODUCT_FETCH_STATE,
+  payload: fetchState,
+});
+
+export const setBestsellerProducts = (products) => ({
+  type: SET_BESTSELLER_PRODUCTS,
+  payload: products,
 });
 
 export const fetchCategories = () => async (dispatch, getState) => {
@@ -113,5 +131,34 @@ export const fetchProducts = (categoryId) => async (dispatch, getState) => {
     }
     console.error("Failed to fetch products:", error);
     dispatch(setFetchState("NOT_FETCHED"));
+  }
+};
+export const fetchProduct = (productId) => async (dispatch) => {
+  dispatch(setProductFetchState("FETCHING"));
+
+  try {
+    const response = await apiClient.get(`/products/${productId}`);
+
+    dispatch(setProduct(response.data));
+    dispatch(setProductFetchState("FETCHED"));
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    dispatch(setProductFetchState("NOT_FETCHED"));
+  }
+};
+
+export const fetchBestsellerProducts = () => async (dispatch) => {
+  try {
+    const response = await apiClient.get("/products", {
+      params: {
+        sort: "sell_count:desc",
+        limit: 8,
+        offset: 0,
+      },
+    });
+
+    dispatch(setBestsellerProducts(response.data.products));
+  } catch (error) {
+    console.error("Failed to fetch bestseller products:", error);
   }
 };

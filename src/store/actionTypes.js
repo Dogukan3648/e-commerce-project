@@ -13,3 +13,6 @@ export const SET_SORT = "SET_SORT";
 export const SET_CART = "SET_CART";
 export const SET_PAYMENT = "SET_PAYMENT";
 export const SET_ADDRESS = "SET_ADDRESS";
+export const SET_PRODUCT = "SET_PRODUCT";
+export const SET_PRODUCT_FETCH_STATE = "SET_PRODUCT_FETCH_STATE";
+export const SET_BESTSELLER_PRODUCTS = "SET_BESTSELLER_PRODUCTS";

@@ -1,4 +1,4 @@
-const createCategorySlug = (value) =>
+export const createSlug = (value) =>
   value
     .toLocaleLowerCase("tr-TR")
     .replace(/ı/g, "i")
@@ -12,7 +12,7 @@ const createCategorySlug = (value) =>
 
 export const getCategoryPath = (category) => {
   const gender = category.gender === "k" ? "kadin" : "erkek";
-  const categoryName = createCategorySlug(category.code.split(":")[1]);
+  const categoryName = createSlug(category.code.split(":")[1]);
 
   return `/shop/${gender}/${categoryName}/${category.id}`;
 };
