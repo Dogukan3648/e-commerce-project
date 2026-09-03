@@ -1,12 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ShopPagination from "./ShopPagination";
 import ShopProductCard from "./ShopProductCard";
 
-import { fetchProducts, setOffset } from "../../store/actions/productActions";
+import {
+  fetchProducts,
+  setLimit,
+  setOffset,
+} from "../../store/actions/productActions";
 
 const ShopProductsSection = () => {
+  const [isLimitReady, setLimitReady] = useState(false);
   const { categoryId } = useParams();
 
   const dispatch = useDispatch();
@@ -15,24 +20,47 @@ const ShopProductsSection = () => {
     (state) => state.product,
   );
 
-  const mobileProducts = productList.slice(0, 4);
-
-  const previousQuery = useRef({ categoryId, filter, sort });
+  const previousQuery = useRef({ categoryId, filter, sort, limit });
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleBreakPointChange = (event) => {
+      const nextLimit = event.matches ? 12 : 4;
+
+      dispatch(setLimit(nextLimit));
+      setLimitReady(true);
+    };
+
+    handleBreakPointChange(mediaQuery);
+
+    mediaQuery.addEventListener("change", handleBreakPointChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleBreakPointChange);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLimitReady) {
+      return;
+    }
+
     const queryChanged =
       previousQuery.current.categoryId !== categoryId ||
       previousQuery.current.filter !== filter ||
-      previousQuery.current.sort !== sort;
+      previousQuery.current.sort !== sort ||
+      previousQuery.current.limit !== limit;
 
-    previousQuery.current = { categoryId, filter, sort };
+    previousQuery.current = { categoryId, filter, sort, limit };
 
     if (queryChanged && offset !== 0) {
       dispatch(setOffset(0));
       return;
     }
+
     dispatch(fetchProducts(categoryId));
-  }, [dispatch, categoryId, filter, sort, limit, offset]);
+  }, [dispatch, categoryId, filter, sort, limit, offset, isLimitReady]);
 
   if (fetchState === "FETCHING") {
     return (
@@ -46,7 +74,7 @@ const ShopProductsSection = () => {
     <section className="bg-white">
       <div className="mx-auto flex flex-col items-center gap-12 py-20 lg:w-[1124px] lg:py-12">
         <div className="flex flex-col items-center gap-[30px] lg:hidden">
-          {mobileProducts.map((product) => (
+          {productList.map((product) => (
             <ShopProductCard key={product.id} product={product} />
           ))}
         </div>

@@ -29,13 +29,24 @@ const ProductDetailPage = () => {
     dispatch(fetchBestsellerProducts());
   }, [dispatch]);
 
-  if (productFetchState === "FETCHING" || !product) {
+  if (productFetchState === "FAILED") {
+    return (
+      <section className="flex min-h-80 items-center justify-center bg-white">
+        <p className="text-base font-bold text-danger">
+          Product could not be loaded.
+        </p>
+      </section>
+    );
+  }
+
+  if (productFetchState !== "FETCHED" || !product) {
     return (
       <section className="flex min-h-80 items-center justify-center bg-white">
         <div className="size-10 animate-spin rounded-full border-4 border-soft-gray border-t-primary" />
       </section>
     );
   }
+
   return (
     <>
       <ProductDetailBreadcrumb />

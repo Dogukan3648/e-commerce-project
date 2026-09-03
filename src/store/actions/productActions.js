@@ -134,6 +134,7 @@ export const fetchProducts = (categoryId) => async (dispatch, getState) => {
   }
 };
 export const fetchProduct = (productId) => async (dispatch) => {
+  dispatch(setProduct(null));
   dispatch(setProductFetchState("FETCHING"));
 
   try {
@@ -143,7 +144,7 @@ export const fetchProduct = (productId) => async (dispatch) => {
     dispatch(setProductFetchState("FETCHED"));
   } catch (error) {
     console.error("Failed to fetch product:", error);
-    dispatch(setProductFetchState("NOT_FETCHED"));
+    dispatch(setProductFetchState("FAILED"));
   }
 };
 
