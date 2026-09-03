@@ -2,6 +2,7 @@ import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import CartDropdown from "./CartDropdown";
 
 import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
 import { getCategoryPath } from "../../utils/categoryUtils";
@@ -21,6 +22,8 @@ const getGravatarUrl = async (email) => {
 };
 
 const Navbar = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
   const [avatar, setAvatar] = useState({
     email: "",
     url: "",
@@ -28,6 +31,9 @@ const Navbar = () => {
 
   const user = useSelector((state) => state.client.user);
   const categories = useSelector((state) => state.product.categories);
+  const cart = useSelector((state) => state.shoppingCart.cart);
+
+  const cartItemCount = cart.reduce((total, item) => total + item.count, 0);
 
   const womenCategories = categories.filter(
     (category) => category.gender === "k",
@@ -69,24 +75,44 @@ const Navbar = () => {
 
   return (
     <div className="pb-24 lg:mt-3 lg:flex lg:h-14 lg:w-full lg:items-center lg:pr-5 lg:pl-10 lg:pb-0">
-      <div className="flex h-28 items-center justify-between px-9 lg:h-auto lg:w-47 lg:px-0">
+      <div className="relative flex h-28 items-center justify-between px-9 lg:h-auto lg:w-47 lg:px-0">
         <Link to="/" className="text-2xl font-bold leading-8">
           Bandage
         </Link>
 
         <div className="flex items-center gap-2 lg:hidden">
-          <button type="button" aria-label="Search" className="p-2">
+          <button
+            type="button"
+            aria-label="Search"
+            className="cursor-pointer p-2"
+          >
             <Search size={24} />
           </button>
 
-          <button type="button" aria-label="Shopping cart" className="p-2">
+          <button
+            type="button"
+            aria-label="Shopping cart"
+            aria-expanded={isCartOpen}
+            onClick={() => setIsCartOpen((prev) => !prev)}
+            className="cursor-pointer p-2"
+          >
             <ShoppingCart size={24} />
           </button>
 
-          <button type="button" aria-label="Menu" className="p-2">
+          <button
+            type="button"
+            aria-label="Menu"
+            className="cursor-pointer p-2"
+          >
             <Menu size={24} />
           </button>
         </div>
+
+        {isCartOpen && (
+          <div className="lg:hidden">
+            <CartDropdown cart={cart} />
+          </div>
+        )}
       </div>
 
       <nav className="mt-12 lg:ml-10 lg:mt-0" aria-label="Main navigation">
@@ -192,23 +218,32 @@ const Navbar = () => {
           </div>
         )}
 
-        <button type="button" aria-label="Search" className="rounded-full p-4">
+        <button
+          type="button"
+          aria-label="Search"
+          className="cursor-pointer rounded-full p-4"
+        >
           <Search size={16} />
         </button>
 
-        <button
-          type="button"
-          aria-label="Shopping cart"
-          className="flex items-center gap-1 rounded-full p-4"
-        >
-          <ShoppingCart size={16} />
-          <span className="text-xs leading-4">1</span>
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            aria-label="Shopping cart"
+            aria-expanded={isCartOpen}
+            onClick={() => setIsCartOpen((prev) => !prev)}
+            className="flex cursor-pointer items-center gap-1 rounded-full p-4"
+          >
+            <ShoppingCart size={16} />
+            <span className="text-xs leading-4">{cartItemCount}</span>
+          </button>
+          {isCartOpen && <CartDropdown cart={cart} />}
+        </div>
 
         <button
           type="button"
           aria-label="Favorites"
-          className="flex items-center gap-1 rounded-full p-4"
+          className="flex cursor-pointer items-center gap-1 rounded-full p-4"
         >
           <Heart size={16} />
           <span className="text-xs leading-4">1</span>
