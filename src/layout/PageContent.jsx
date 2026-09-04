@@ -5,6 +5,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ShopPage from "../pages/ShopPage";
+import ShoppingCartPage from "../pages/ShoppingCartPage";
 import SignupPage from "../pages/SignupPage";
 import TeamPage from "../pages/TeamPage";
 
@@ -28,6 +29,7 @@ const PageContent = () => {
       <Route path="/about" component={AboutPage} />
       <Route path="/signup" component={SignupPage} />
       <Route path="/login" component={LoginPage} />
+      <Route exact path="/cart" component={ShoppingCartPage} />
     </Switch>
   );
 };

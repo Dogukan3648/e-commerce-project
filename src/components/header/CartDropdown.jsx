@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const CartDropdown = ({ cart }) => {
   const cartItemCount = cart.reduce((total, item) => total + item.count, 0);
 
@@ -45,12 +47,12 @@ const CartDropdown = ({ cart }) => {
       </div>
 
       <div className="flex gap-3 border-t border-soft-gray p-4">
-        <button
-          type="button"
+        <Link
+          to={"/cart"}
           className="flex flex-1 cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-primary bg-white px-3 py-2.5 text-sm font-bold text-primary"
         >
           Go to Cart
-        </button>
+        </Link>
 
         <button
           type="button"
