@@ -68,8 +68,9 @@ const CartItem = ({ item }) => {
             <button
               type="button"
               aria-label="Increase quantity"
+              disabled={count >= product.stock}
               onClick={() => dispatch(increaseCartItem(product.id))}
-              className="flex size-9 cursor-pointer items-center justify-center rounded-r-md border border-soft-gray text-dark"
+              className="flex size-9 cursor-pointer items-center justify-center rounded-r-md border border-soft-gray text-dark disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Plus size={15} />
             </button>

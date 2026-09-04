@@ -15,6 +15,7 @@ import {
 
 let categoriesRequest = null;
 let productRequestId = 0;
+let productDetailRequestId = 0;
 
 export const setCategories = (categories) => ({
   type: SET_CATEGORIES,
@@ -130,19 +131,29 @@ export const fetchProducts = (categoryId) => async (dispatch, getState) => {
       return;
     }
     console.error("Failed to fetch products:", error);
-    dispatch(setFetchState("NOT_FETCHED"));
+    dispatch(setProductList([]));
+    dispatch(setTotal(0));
+    dispatch(setFetchState("FAILED"));
   }
 };
 export const fetchProduct = (productId) => async (dispatch) => {
+  const requestId = ++productDetailRequestId;
+
   dispatch(setProduct(null));
   dispatch(setProductFetchState("FETCHING"));
 
   try {
     const response = await apiClient.get(`/products/${productId}`);
+    if (requestId !== productDetailRequestId) {
+      return;
+    }
 
     dispatch(setProduct(response.data));
     dispatch(setProductFetchState("FETCHED"));
   } catch (error) {
+    if (requestId !== productDetailRequestId) {
+      return;
+    }
     console.error("Failed to fetch product:", error);
     dispatch(setProductFetchState("FAILED"));
   }

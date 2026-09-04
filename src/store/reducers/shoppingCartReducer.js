@@ -23,6 +23,10 @@ const shoppingCartReducer = (state = initialState, action) => {
       );
 
       if (existingProduct) {
+        if (existingProduct.count >= existingProduct.product.stock) {
+          return state;
+        }
+
         return {
           ...state,
           cart: state.cart.map((item) =>
@@ -31,6 +35,10 @@ const shoppingCartReducer = (state = initialState, action) => {
               : item,
           ),
         };
+      }
+
+      if (action.payload.stock <= 0) {
+        return state;
       }
       return {
         ...state,
@@ -49,7 +57,7 @@ const shoppingCartReducer = (state = initialState, action) => {
       return {
         ...state,
         cart: state.cart.map((item) =>
-          item.product.id === action.payload
+          item.product.id === action.payload && item.count < item.product.stock
             ? { ...item, count: item.count + 1 }
             : item,
         ),

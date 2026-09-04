@@ -95,8 +95,9 @@ const ProductInfo = ({ product }) => {
 
         <button
           type="button"
+          disabled={!isInStock}
           onClick={() => dispatch(addToCart(product))}
-          className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark"
+          className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ShoppingCart size={20} />
         </button>

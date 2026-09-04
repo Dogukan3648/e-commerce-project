@@ -69,6 +69,15 @@ const ShopProductsSection = () => {
       </section>
     );
   }
+  if (fetchState === "FAILED") {
+    return (
+      <section className="flex min-h-80 items-center justify-center bg-white">
+        <p className="text-sm font-bold text-muted">
+          Products could not be loaded.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-white">
