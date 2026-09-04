@@ -1,15 +1,21 @@
 import { useSelector } from "react-redux";
 import CartItem from "./CartItem";
+import OrderSummary from "./OrderSummary";
 
 const ShoppingCartSection = () => {
   const cart = useSelector((state) => state.shoppingCart.cart);
 
   const selectedItems = cart.filter((item) => item.checked);
 
-  const totalPrice = selectedItems.reduce(
+  const productsTotal = selectedItems.reduce(
     (total, item) => total + item.product.price * item.count,
     0,
   );
+
+  const shippingPayment = 0;
+  const discount = 0;
+
+  const grandTotal = productsTotal + shippingPayment - discount;
 
   return (
     <section className="bg-white px-2 py-8 sm:px-4 lg:px-10 lg:py-12">
@@ -28,37 +34,32 @@ const ShoppingCartSection = () => {
             </p>
           </div>
         ) : (
-          <>
-            <div className="mb-2 hidden items-center px-4 text-xs font-bold text-muted lg:flex">
-              <span className="flex-1">Product</span>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 hidden items-center px-4 text-xs font-bold text-muted lg:flex">
+                <span className="flex-1">Product</span>
 
-              <div className="flex shrink-0 items-center gap-5">
-                <span className="w-28 text-center">Quantity</span>
-                <span className="w-24 text-right">Total</span>
-                <span className="w-9" />
+                <div className="flex shrink-0 items-center gap-5">
+                  <span className="w-28 text-center">Quantity</span>
+                  <span className="w-24 text-right">Total</span>
+                  <span className="w-9" />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {cart.map((item) => (
+                  <CartItem key={item.product.id} item={item} />
+                ))}
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {cart.map((item) => (
-                <CartItem key={item.product.id} item={item} />
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-center justify-between rounded-lg border border-soft-gray bg-white px-4 py-5 lg:px-6">
-              <div>
-                <p className="text-base font-bold text-dark">Total Payment</p>
-
-                <p className="mt-1 text-xs text-muted">
-                  Selected products only
-                </p>
-              </div>
-
-              <p className="text-xl font-bold text-primary lg:text-2xl">
-                ${totalPrice.toFixed(2)}
-              </p>
-            </div>
-          </>
+            <OrderSummary
+              productsTotal={productsTotal}
+              shippingPayment={shippingPayment}
+              discount={discount}
+              grandTotal={grandTotal}
+            />
+          </div>
         )}
       </div>
     </section>
