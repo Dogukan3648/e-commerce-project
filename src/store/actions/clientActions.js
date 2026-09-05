@@ -1,5 +1,12 @@
 import apiClient from "../../api/apiClient";
-import { SET_LANGUAGE, SET_ROLES, SET_THEME, SET_USER } from "../actionTypes";
+import {
+  SET_ADDRESS_LIST,
+  SET_AUTH_CHECKED,
+  SET_LANGUAGE,
+  SET_ROLES,
+  SET_THEME,
+  SET_USER,
+} from "../actionTypes";
 
 export const setUser = (user) => ({
   type: SET_USER,
@@ -19,6 +26,16 @@ export const setTheme = (theme) => ({
 export const setLanguage = (language) => ({
   type: SET_LANGUAGE,
   payload: language,
+});
+
+export const setAuthChecked = (authChecked) => ({
+  type: SET_AUTH_CHECKED,
+  payload: authChecked,
+});
+
+export const setAddressList = (addressList) => ({
+  type: SET_ADDRESS_LIST,
+  payload: addressList,
 });
 
 export const fetchRoles = () => async (dispatch, getState) => {
@@ -63,6 +80,7 @@ export const verifyToken = () => async (dispatch) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
+    dispatch(setAuthChecked(true));
     return;
   }
 
@@ -81,8 +99,43 @@ export const verifyToken = () => async (dispatch) => {
     return user;
   } catch (error) {
     if (error.response?.status === 401) {
+      dispatch(setUser({}));
       localStorage.removeItem("token");
       delete apiClient.defaults.headers.common.Authorization;
     }
+  } finally {
+    dispatch(setAuthChecked(true));
   }
+};
+
+export const fetchAddressList = () => async (dispatch) => {
+  try {
+    const response = await apiClient.get("/user/address");
+
+    dispatch(setAddressList(response.data));
+  } catch (error) {
+    console.error("Failed to fetch address list:", error);
+  }
+};
+
+export const createAddress = (addressData) => async (dispatch) => {
+  const response = await apiClient.post("/user/address", addressData);
+
+  await dispatch(fetchAddressList());
+
+  return response.data;
+};
+
+export const updateAddress = (addressData) => async (dispatch) => {
+  const response = await apiClient.put("/user/address", addressData);
+
+  await dispatch(fetchAddressList());
+
+  return response.data;
+};
+
+export const deleteAddress = (addressId) => async (dispatch) => {
+  await apiClient.delete(`/user/address/${addressId}`);
+
+  await dispatch(fetchAddressList());
 };

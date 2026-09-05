@@ -1,9 +1,18 @@
+import { Link } from "react-router-dom";
+
 const OrderSummary = ({
   productsTotal = 0,
   shippingPayment = 0,
   discount = 0,
   grandTotal = 0,
+  actionLabel = "Create Order",
+  actionTo = "/create-order",
+  onAction,
+  actionDisabled = false,
 }) => {
+  const actionClassName =
+    "mt-6 flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-bold text-white";
+
   return (
     <aside className="w-full rounded-lg border border-border-light bg-white p-5 lg:w-80 lg:shrink-0">
       <h2 className="text-lg font-bold text-dark">Order Summary</h2>
@@ -39,12 +48,24 @@ const OrderSummary = ({
           </span>
         </div>
 
-        <button
-          type="button"
-          className="mt-6 flex w-full cursor-pointer items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-bold text-white"
-        >
-          Create Order
-        </button>
+        {onAction ? (
+          <button
+            type="button"
+            onClick={onAction}
+            disabled={actionDisabled}
+            className={`${actionClassName} ${
+              actionDisabled
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer"
+            }`}
+          >
+            {actionLabel}
+          </button>
+        ) : (
+          <Link to={actionTo} className={`${actionClassName} cursor-pointer`}>
+            {actionLabel}
+          </Link>
+        )}
       </div>
     </aside>
   );

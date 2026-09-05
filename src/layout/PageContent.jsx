@@ -1,6 +1,8 @@
 import { Route, Switch } from "react-router-dom";
+import ProtectedRoute from "../components/common/ProtectedRoute";
 import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
+import CreateOrderPage from "../pages/CreateOrderPage";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
@@ -30,6 +32,7 @@ const PageContent = () => {
       <Route path="/signup" component={SignupPage} />
       <Route path="/login" component={LoginPage} />
       <Route exact path="/cart" component={ShoppingCartPage} />
+      <ProtectedRoute exact path="/create-order" component={CreateOrderPage} />
     </Switch>
   );
 };
