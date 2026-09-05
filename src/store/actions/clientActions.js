@@ -2,6 +2,7 @@ import apiClient from "../../api/apiClient";
 import {
   SET_ADDRESS_LIST,
   SET_AUTH_CHECKED,
+  SET_CREDIT_CARDS,
   SET_LANGUAGE,
   SET_ROLES,
   SET_THEME,
@@ -36,6 +37,11 @@ export const setAuthChecked = (authChecked) => ({
 export const setAddressList = (addressList) => ({
   type: SET_ADDRESS_LIST,
   payload: addressList,
+});
+
+export const setCreditCards = (creditCards) => ({
+  type: SET_CREDIT_CARDS,
+  payload: creditCards,
 });
 
 export const fetchRoles = () => async (dispatch, getState) => {
@@ -138,4 +144,36 @@ export const deleteAddress = (addressId) => async (dispatch) => {
   await apiClient.delete(`/user/address/${addressId}`);
 
   await dispatch(fetchAddressList());
+};
+
+export const fetchCreditCards = () => async (dispatch) => {
+  try {
+    const response = await apiClient.get("/user/card");
+
+    dispatch(setCreditCards(response.data));
+  } catch (error) {
+    console.error("Failed to fetch credit cards:", error);
+  }
+};
+
+export const createCreditCard = (cardData) => async (dispatch) => {
+  const response = await apiClient.post("/user/card", cardData);
+
+  await dispatch(fetchCreditCards());
+
+  return response.data;
+};
+
+export const updateCreditCard = (cardData) => async (dispatch) => {
+  const response = await apiClient.put("/user/card", cardData);
+
+  await dispatch(fetchCreditCards());
+
+  return response.data;
+};
+
+export const deleteCreditCard = (cardId) => async (dispatch) => {
+  await apiClient.delete(`/user/card/${cardId}`);
+
+  await dispatch(fetchCreditCards());
 };

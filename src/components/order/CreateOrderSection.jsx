@@ -5,6 +5,7 @@ import { setAddress } from "../../store/actions/shoppingCartActions";
 import OrderSummary from "../cart/OrderSummary";
 import AddressStep from "./AddressStep";
 import CheckoutSteps from "./CheckoutSteps";
+import PaymentStep from "./PaymentStep";
 
 const CreateOrderSection = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,10 @@ const CreateOrderSection = () => {
   const [selectedReceiptAddressId, setSelectedReceiptAddressId] =
     useState(null);
 
+  const [selectedCardId, setSelectedCardId] = useState(null);
+
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
 
   useEffect(() => {
     dispatch(fetchAddressList());
@@ -58,6 +62,8 @@ const CreateOrderSection = () => {
         receipt: receiptAddress,
       }),
     );
+
+    setCurrentStep(2);
   };
 
   return (
@@ -65,30 +71,41 @@ const CreateOrderSection = () => {
       <div className="mx-auto w-full max-w-7xl px-4 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 flex-col gap-4">
-            <CheckoutSteps />
+            <CheckoutSteps currentStep={currentStep} />
 
-            <div className="flex items-start gap-3 rounded-lg border border-border-light bg-white p-4">
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                i
-              </span>
+            {currentStep === 1 ? (
+              <>
+                <div className="flex items-start gap-3 rounded-lg border border-border-light bg-white p-4">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                    i
+                  </span>
 
-              <p className="text-sm leading-5 text-muted">
-                Select your shipping address. You can use the same address for
-                receipt information or choose a different one.
-              </p>
-            </div>
+                  <p className="text-sm leading-5 text-muted">
+                    Select your shipping address. You can use the same address
+                    for receipt information or choose a different one.
+                  </p>
+                </div>
 
-            <div className="rounded-lg border border-border-light bg-white p-4 lg:p-6">
-              <AddressStep
-                addressList={addressList}
-                selectedShippingAddressId={selectedShippingAddressId}
-                setSelectedShippingAddressId={setSelectedShippingAddressId}
-                selectedReceiptAddressId={selectedReceiptAddressId}
-                setSelectedReceiptAddressId={setSelectedReceiptAddressId}
-                sameAsShipping={sameAsShipping}
-                setSameAsShipping={setSameAsShipping}
-              />
-            </div>
+                <div className="rounded-lg border border-border-light bg-white p-4 lg:p-6">
+                  <AddressStep
+                    addressList={addressList}
+                    selectedShippingAddressId={selectedShippingAddressId}
+                    setSelectedShippingAddressId={setSelectedShippingAddressId}
+                    selectedReceiptAddressId={selectedReceiptAddressId}
+                    setSelectedReceiptAddressId={setSelectedReceiptAddressId}
+                    sameAsShipping={sameAsShipping}
+                    setSameAsShipping={setSameAsShipping}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="rounded-lg border border-border-light bg-white p-4 lg:p-6">
+                <PaymentStep
+                  selectedCardId={selectedCardId}
+                  setSelectedCardId={setSelectedCardId}
+                />
+              </div>
+            )}
           </div>
 
           <OrderSummary

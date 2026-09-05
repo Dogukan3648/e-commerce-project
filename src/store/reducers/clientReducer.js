@@ -1,6 +1,7 @@
 import {
   SET_ADDRESS_LIST,
   SET_AUTH_CHECKED,
+  SET_CREDIT_CARDS,
   SET_LANGUAGE,
   SET_ROLES,
   SET_THEME,
@@ -50,6 +51,11 @@ const clientReducer = (state = initialState, action) => {
       return {
         ...state,
         addressList: action.payload,
+      };
+    case SET_CREDIT_CARDS:
+      return {
+        ...state,
+        creditCards: action.payload,
       };
     default:
       return state;
