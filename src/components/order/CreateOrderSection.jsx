@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAddressList } from "../../store/actions/clientActions";
-import { setAddress } from "../../store/actions/shoppingCartActions";
+import {
+  setAddress,
+  setPayment,
+} from "../../store/actions/shoppingCartActions";
 import OrderSummary from "../cart/OrderSummary";
 import AddressStep from "./AddressStep";
 import CheckoutSteps from "./CheckoutSteps";
@@ -12,9 +15,12 @@ const CreateOrderSection = () => {
 
   const addressList = useSelector((state) => state.client.addressList);
   const cart = useSelector((state) => state.shoppingCart.cart);
+  const creditCards = useSelector((state) => state.client.creditCards);
 
   const [selectedShippingAddressId, setSelectedShippingAddressId] =
     useState(null);
+
+  const [isPaymentReady, setIsPaymentReady] = useState(false);
 
   const [selectedReceiptAddressId, setSelectedReceiptAddressId] =
     useState(null);
@@ -66,12 +72,35 @@ const CreateOrderSection = () => {
     setCurrentStep(2);
   };
 
+  const handleSavePayment = () => {
+    const selectedCard = creditCards.find((card) => card.id === selectedCardId);
+
+    if (!selectedCard || !isPaymentReady) {
+      return;
+    }
+
+    dispatch(
+      setPayment({
+        cardId: selectedCard.id,
+        installment: 1,
+      }),
+    );
+  };
+
+  const handleAddressChange = () => {
+    setIsPaymentReady(false);
+    setCurrentStep(1);
+  };
+
   return (
     <section className="bg-light-gray py-6 lg:py-10">
       <div className="mx-auto w-full max-w-7xl px-4 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 flex-col gap-4">
-            <CheckoutSteps currentStep={currentStep} />
+            <CheckoutSteps
+              currentStep={currentStep}
+              onAddressChange={handleAddressChange}
+            />
 
             {currentStep === 1 ? (
               <>
@@ -103,19 +132,22 @@ const CreateOrderSection = () => {
                 <PaymentStep
                   selectedCardId={selectedCardId}
                   setSelectedCardId={setSelectedCardId}
+                  grandTotal={grandTotal}
+                  onPaymentReadyChange={setIsPaymentReady}
                 />
               </div>
             )}
           </div>
-
           <OrderSummary
             productsTotal={productsTotal}
             shippingPayment={shippingPayment}
             discount={discount}
             grandTotal={grandTotal}
-            actionLabel="Save Address"
-            onAction={handleSaveAddress}
-            actionDisabled={!canSaveAddress}
+            actionLabel={currentStep === 1 ? "Save Address" : "Pay"}
+            onAction={currentStep === 1 ? handleSaveAddress : handleSavePayment}
+            actionDisabled={
+              currentStep === 1 ? !canSaveAddress : !isPaymentReady
+            }
           />
         </div>
       </div>

@@ -7,9 +7,16 @@ import {
   updateCreditCard,
 } from "../../store/actions/clientActions";
 import CardForm from "./CardForm";
+import InstallmentOptions from "./InstallmentOptions";
+import PaymentSecurityFields from "./PaymentSecurityFields";
 import SavedCardOption from "./SavedCardOption";
 
-const PaymentStep = ({ selectedCardId, setSelectedCardId }) => {
+const PaymentStep = ({
+  selectedCardId,
+  setSelectedCardId,
+  grandTotal,
+  onPaymentReadyChange,
+}) => {
   const dispatch = useDispatch();
 
   const creditCards = useSelector((state) => state.client.creditCards);
@@ -17,12 +24,27 @@ const PaymentStep = ({ selectedCardId, setSelectedCardId }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cvv, setCvv] = useState("");
+  const [useThreeDSecure, setUseThreeDSecure] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCreditCards());
   }, [dispatch]);
 
+  useEffect(() => {
+    const hasValidCvv = /^\d{3,4}$/.test(cvv);
+
+    onPaymentReadyChange(selectedCardId !== null && !isFormOpen && hasValidCvv);
+  }, [cvv, isFormOpen, selectedCardId, onPaymentReadyChange]);
+
+  const handleSelectCard = (cardId) => {
+    setCvv("");
+    setUseThreeDSecure(false);
+    setSelectedCardId(cardId);
+  };
+
   const handleAddCard = () => {
+    handleSelectCard(null);
     setEditingCard(null);
     setIsFormOpen(true);
   };
@@ -32,7 +54,15 @@ const PaymentStep = ({ selectedCardId, setSelectedCardId }) => {
     setIsFormOpen(true);
   };
 
+  const handleCvvChange = (event) => {
+    const numericValue = event.target.value.replace(/\D/g, "").slice(0, 4);
+
+    setCvv(numericValue);
+  };
+
   const handleCancelForm = () => {
+    setCvv("");
+    setUseThreeDSecure(false);
     setEditingCard(null);
     setIsFormOpen(false);
   };
@@ -70,7 +100,7 @@ const PaymentStep = ({ selectedCardId, setSelectedCardId }) => {
     await dispatch(deleteCreditCard(cardId));
 
     if (selectedCardId === cardId) {
-      setSelectedCardId(null);
+      handleSelectCard(null);
     }
 
     if (editingCard?.id === cardId) {
@@ -89,47 +119,84 @@ const PaymentStep = ({ selectedCardId, setSelectedCardId }) => {
       </div>
 
       {isFormOpen && (
-        <CardForm
-          card={editingCard}
-          onSubmit={handleCardSubmit}
-          onCancel={handleCancelForm}
-          isSubmitting={isSubmitting}
-        />
+        <div className="flex flex-col gap-6">
+          <CardForm
+            card={editingCard}
+            onSubmit={handleCardSubmit}
+            onCancel={handleCancelForm}
+            isSubmitting={isSubmitting}
+          />
+
+          {!editingCard && (
+            <>
+              <div className="border-t border-border-light" />
+
+              <PaymentSecurityFields
+                cvv={cvv}
+                onCvvChange={handleCvvChange}
+                useThreeDSecure={useThreeDSecure}
+                onThreeDSecureChange={setUseThreeDSecure}
+              />
+
+              <div className="border-t border-border-light" />
+
+              <InstallmentOptions total={grandTotal} />
+            </>
+          )}
+        </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        <h3 className="text-base font-bold text-dark">Payment Method</h3>
+      {!isFormOpen && (
+        <div className="flex flex-col gap-4">
+          <h3 className="text-base font-bold text-dark">Payment Method</h3>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap">
-          <button
-            type="button"
-            onClick={handleAddCard}
-            className="flex min-h-36 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-soft-gray bg-white text-primary transition hover:border-primary lg:w-[calc(50%_-_0.375rem)]"
-          >
-            <span className="text-3xl font-light">+</span>
+          <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap">
+            <button
+              type="button"
+              onClick={handleAddCard}
+              className="flex min-h-36 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-soft-gray bg-white text-primary transition hover:border-primary lg:w-[calc(50%_-_0.375rem)]"
+            >
+              <span className="text-3xl font-light">+</span>
+              <span className="text-sm font-bold">Add New Card</span>
+            </button>
 
-            <span className="text-sm font-bold">Add New Card</span>
-          </button>
+            {creditCards.map((card) => (
+              <div key={card.id} className="w-full lg:w-[calc(50%_-_0.375rem)]">
+                <SavedCardOption
+                  card={card}
+                  isSelected={selectedCardId === card.id}
+                  onSelect={() => handleSelectCard(card.id)}
+                  onEdit={handleEditCard}
+                  onDelete={handleDeleteCard}
+                />
+              </div>
+            ))}
+          </div>
 
-          {creditCards.map((card) => (
-            <div key={card.id} className="w-full lg:w-[calc(50%_-_0.375rem)]">
-              <SavedCardOption
-                card={card}
-                isSelected={selectedCardId === card.id}
-                onSelect={() => setSelectedCardId(card.id)}
-                onEdit={handleEditCard}
-                onDelete={handleDeleteCard}
-              />
-            </div>
-          ))}
+          {creditCards.length === 0 && (
+            <p className="text-sm text-muted">
+              You do not have a saved card yet.
+            </p>
+          )}
         </div>
+      )}
 
-        {creditCards.length === 0 && !isFormOpen && (
-          <p className="text-sm text-muted">
-            You do not have a saved card yet.
-          </p>
-        )}
-      </div>
+      {!isFormOpen && selectedCardId !== null && (
+        <>
+          <div className="border-t border-border-light" />
+
+          <PaymentSecurityFields
+            cvv={cvv}
+            onCvvChange={handleCvvChange}
+            useThreeDSecure={useThreeDSecure}
+            onThreeDSecureChange={setUseThreeDSecure}
+          />
+
+          <div className="border-t border-border-light" />
+
+          <InstallmentOptions total={grandTotal} />
+        </>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-const CheckoutSteps = ({ currentStep }) => {
+const CheckoutSteps = ({ currentStep, onAddressChange }) => {
   const isAddressStep = currentStep === 1;
   const isPaymentStep = currentStep === 2;
 
@@ -30,6 +30,16 @@ const CheckoutSteps = ({ currentStep }) => {
             Choose your shipping and receipt address
           </p>
         </div>
+
+        {!isAddressStep && (
+          <button
+            type="button"
+            onClick={onAddressChange}
+            className="ml-auto shrink-0 cursor-pointer text-sm font-bold text-primary"
+          >
+            Change
+          </button>
+        )}
       </div>
 
       <div
