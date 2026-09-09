@@ -11,9 +11,17 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
         if (!authChecked) {
           return null;
         }
-
         if (!user?.email) {
-          return <Redirect to="/login" />;
+          const from = `${routeProps.location.pathname}${routeProps.location.search}${routeProps.location.hash}`;
+
+          return (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from },
+              }}
+            />
+          );
         }
 
         return <Component {...routeProps} />;

@@ -35,6 +35,7 @@ const CreateOrderSection = () => {
   }, [dispatch]);
 
   const selectedItems = cart.filter((item) => item.checked);
+  const hasSelectedItems = selectedItems.length > 0;
 
   const productsTotal = selectedItems.reduce(
     (total, item) => total + item.product.price * item.count,
@@ -46,10 +47,15 @@ const CreateOrderSection = () => {
   const grandTotal = productsTotal + shippingPayment - discount;
 
   const canSaveAddress =
+    hasSelectedItems &&
     selectedShippingAddressId !== null &&
     (sameAsShipping || selectedReceiptAddressId !== null);
 
   const handleSaveAddress = () => {
+    if (!hasSelectedItems) {
+      return;
+    }
+
     const shippingAddress = addressList.find(
       (address) => address.id === selectedShippingAddressId,
     );
@@ -75,7 +81,7 @@ const CreateOrderSection = () => {
   const handleSavePayment = () => {
     const selectedCard = creditCards.find((card) => card.id === selectedCardId);
 
-    if (!selectedCard || !isPaymentReady) {
+    if (!selectedCard || !isPaymentReady || !hasSelectedItems) {
       return;
     }
 
@@ -138,6 +144,7 @@ const CreateOrderSection = () => {
               </div>
             )}
           </div>
+
           <OrderSummary
             productsTotal={productsTotal}
             shippingPayment={shippingPayment}
@@ -146,7 +153,9 @@ const CreateOrderSection = () => {
             actionLabel={currentStep === 1 ? "Save Address" : "Pay"}
             onAction={currentStep === 1 ? handleSaveAddress : handleSavePayment}
             actionDisabled={
-              currentStep === 1 ? !canSaveAddress : !isPaymentReady
+              currentStep === 1
+                ? !canSaveAddress
+                : !isPaymentReady || !hasSelectedItems
             }
           />
         </div>

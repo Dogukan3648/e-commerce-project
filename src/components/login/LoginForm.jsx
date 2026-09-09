@@ -82,7 +82,7 @@ const LoginForm = () => {
             htmlFor="password"
             className="text-sm font-bold leading-6 tracking-[0.2px] text-dark"
           >
-            Password
+            Password *
           </label>
 
           <input
@@ -90,9 +90,17 @@ const LoginForm = () => {
             id="password"
             autoComplete="current-password"
             placeholder="Password"
-            {...register("password")}
+            {...register("password", {
+              required: "Password is required",
+            })}
             className="h-12 w-full rounded-md border border-border-light bg-light-gray px-5 text-sm leading-7 tracking-[0.2px] text-dark outline-none placeholder:text-muted focus:border-primary"
           />
+
+          {errors.password && (
+            <p className="text-xs leading-5 text-danger">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <label className="flex w-fit cursor-pointer items-center gap-2 text-sm leading-6 text-muted">
