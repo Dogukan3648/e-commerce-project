@@ -1,4 +1,11 @@
-import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
+import {
+  ChevronDown,
+  Heart,
+  Menu,
+  Search,
+  ShoppingCart,
+  User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -23,6 +30,7 @@ const getGravatarUrl = async (email) => {
 
 const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const [avatar, setAvatar] = useState({
     email: "",
@@ -132,6 +140,7 @@ const Navbar = () => {
               <Link to="/shop" className="font-medium text-dark">
                 Shop
               </Link>
+
               <img src={shopChevronIcon} alt="" className="h-2.5 w-1.5" />
             </div>
 
@@ -188,16 +197,42 @@ const Navbar = () => {
 
       <div className="ml-auto hidden shrink-0 items-center text-primary lg:flex">
         {user.email ? (
-          <div className="flex items-center gap-2 rounded-full p-4 text-sm font-bold leading-6">
-            {avatarUrl && (
-              <img
-                src={avatarUrl}
-                alt={`${user.name} avatar`}
-                className="h-8 w-8 rounded-full"
-              />
-            )}
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={isUserMenuOpen}
+              aria-haspopup="menu"
+              onClick={() => setIsUserMenuOpen((prev) => !prev)}
+              className="flex cursor-pointer items-center gap-2 rounded-full p-4 text-sm font-bold leading-6"
+            >
+              {avatarUrl && (
+                <img
+                  src={avatarUrl}
+                  alt={`${user.name} avatar`}
+                  className="h-8 w-8 rounded-full"
+                />
+              )}
 
-            <span className="whitespace-nowrap">{user.name}</span>
+              <span className="whitespace-nowrap">{user.name}</span>
+
+              <ChevronDown size={16} />
+            </button>
+
+            {isUserMenuOpen && (
+              <div
+                role="menu"
+                className="absolute top-full right-0 z-50 w-48 rounded-lg border border-border-light bg-white py-2 shadow-md"
+              >
+                <Link
+                  to="/previous-orders"
+                  role="menuitem"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="block px-4 py-2 text-sm font-medium text-dark hover:bg-light-gray hover:text-primary"
+                >
+                  Previous Orders
+                </Link>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex items-center gap-1 rounded-full p-4 text-sm font-bold leading-6">
@@ -235,8 +270,10 @@ const Navbar = () => {
             className="flex cursor-pointer items-center gap-1 rounded-full p-4"
           >
             <ShoppingCart size={16} />
+
             <span className="text-xs leading-4">{cartItemCount}</span>
           </button>
+
           {isCartOpen && <CartDropdown cart={cart} />}
         </div>
 
@@ -246,6 +283,7 @@ const Navbar = () => {
           className="flex cursor-pointer items-center gap-1 rounded-full p-4"
         >
           <Heart size={16} />
+
           <span className="text-xs leading-4">1</span>
         </button>
       </div>

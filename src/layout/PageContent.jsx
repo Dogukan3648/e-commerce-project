@@ -5,6 +5,7 @@ import ContactPage from "../pages/ContactPage";
 import CreateOrderPage from "../pages/CreateOrderPage";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
+import PreviousOrdersPage from "../pages/PreviousOrdersPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ShopPage from "../pages/ShopPage";
 import ShoppingCartPage from "../pages/ShoppingCartPage";
@@ -33,6 +34,11 @@ const PageContent = () => {
       <Route path="/login" component={LoginPage} />
       <Route exact path="/cart" component={ShoppingCartPage} />
       <ProtectedRoute exact path="/create-order" component={CreateOrderPage} />
+      <ProtectedRoute
+        exact
+        path="/previous-orders"
+        component={PreviousOrdersPage}
+      />
     </Switch>
   );
 };

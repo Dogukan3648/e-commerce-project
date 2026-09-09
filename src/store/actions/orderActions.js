@@ -5,3 +5,9 @@ export const createOrder = (orderData) => async () => {
 
   return response.data;
 };
+
+export const fetchOrders = () => async () => {
+  const response = await apiClient.get("/order");
+
+  return response.data;
+};
