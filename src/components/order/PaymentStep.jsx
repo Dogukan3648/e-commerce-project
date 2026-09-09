@@ -16,6 +16,8 @@ const PaymentStep = ({
   setSelectedCardId,
   grandTotal,
   onPaymentReadyChange,
+  cvv,
+  setCvv,
 }) => {
   const dispatch = useDispatch();
 
@@ -24,7 +26,6 @@ const PaymentStep = ({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [cvv, setCvv] = useState("");
   const [useThreeDSecure, setUseThreeDSecure] = useState(false);
 
   useEffect(() => {

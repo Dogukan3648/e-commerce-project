@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { fetchAddressList } from "../../store/actions/clientActions";
+import { createOrder } from "../../store/actions/orderActions";
 import {
   setAddress,
+  setCart,
   setPayment,
 } from "../../store/actions/shoppingCartActions";
 import OrderSummary from "../cart/OrderSummary";
@@ -16,6 +19,10 @@ const CreateOrderSection = () => {
   const addressList = useSelector((state) => state.client.addressList);
   const cart = useSelector((state) => state.shoppingCart.cart);
   const creditCards = useSelector((state) => state.client.creditCards);
+
+  const [cvv, setCvv] = useState("");
+
+  const [isOrdering, setIsOrdering] = useState(false);
 
   const [selectedShippingAddressId, setSelectedShippingAddressId] =
     useState(null);
@@ -78,19 +85,60 @@ const CreateOrderSection = () => {
     setCurrentStep(2);
   };
 
-  const handleSavePayment = () => {
+  const handleSavePayment = async () => {
     const selectedCard = creditCards.find((card) => card.id === selectedCardId);
 
-    if (!selectedCard || !isPaymentReady || !hasSelectedItems) {
+    if (!selectedCard || !isPaymentReady || !hasSelectedItems || isOrdering) {
       return;
     }
+    const orderData = {
+      address_id: selectedShippingAddressId,
+      order_date: new Date().toISOString().slice(0, 19),
+      card_no: selectedCard.card_no,
+      card_name: selectedCard.name_on_card,
+      card_expire_month: selectedCard.expire_month,
+      card_expire_year: selectedCard.expire_year,
+      card_ccv: Number(cvv),
+      price: Number(grandTotal.toFixed(2)),
+      products: selectedItems.map((item) => ({
+        product_id: item.product.id,
+        count: item.count,
+        detail: "",
+      })),
+    };
 
-    dispatch(
-      setPayment({
-        cardId: selectedCard.id,
-        installment: 1,
-      }),
-    );
+    setIsOrdering(true);
+
+    try {
+      dispatch(
+        setPayment({
+          cardId: selectedCard.id,
+          installment: 1,
+        }),
+      );
+      await dispatch(createOrder(orderData));
+
+      dispatch(setCart([]));
+      dispatch(setAddress({}));
+      dispatch(setPayment({}));
+
+      setSelectedShippingAddressId(null);
+      setSelectedReceiptAddressId(null);
+      setSelectedCardId(null);
+      setSameAsShipping(true);
+      setCvv("");
+      setIsPaymentReady(false);
+      setCurrentStep(1);
+
+      toast.success("Your order has been created successfully!");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Order could not be created. Please try again.",
+      );
+    } finally {
+      setIsOrdering(false);
+    }
   };
 
   const handleAddressChange = () => {
@@ -140,6 +188,8 @@ const CreateOrderSection = () => {
                   setSelectedCardId={setSelectedCardId}
                   grandTotal={grandTotal}
                   onPaymentReadyChange={setIsPaymentReady}
+                  cvv={cvv}
+                  setCvv={setCvv}
                 />
               </div>
             )}
@@ -150,12 +200,18 @@ const CreateOrderSection = () => {
             shippingPayment={shippingPayment}
             discount={discount}
             grandTotal={grandTotal}
-            actionLabel={currentStep === 1 ? "Save Address" : "Pay"}
+            actionLabel={
+              currentStep === 1
+                ? "Save Address"
+                : isOrdering
+                  ? "Processing..."
+                  : "Pay"
+            }
             onAction={currentStep === 1 ? handleSaveAddress : handleSavePayment}
             actionDisabled={
               currentStep === 1
                 ? !canSaveAddress
-                : !isPaymentReady || !hasSelectedItems
+                : !isPaymentReady || !hasSelectedItems || isOrdering
             }
           />
         </div>
