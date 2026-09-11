@@ -164,7 +164,7 @@ export const fetchBestsellerProducts = () => async (dispatch) => {
     const response = await apiClient.get("/products", {
       params: {
         sort: "sell_count:desc",
-        limit: 8,
+        limit: 10,
         offset: 0,
       },
     });

@@ -1,9 +1,14 @@
-const BestsellerProductCard = ({ name, description, price, images }) => {
+import { Link } from "react-router-dom";
+
+const BestsellerProductCard = ({ to, name, description, price, images }) => {
   const imageUrl =
     images?.find((image) => image.index === 0)?.url ?? images?.[0]?.url ?? "";
 
   return (
-    <article className="flex w-87 flex-col overflow-hidden bg-white lg:w-60">
+    <Link
+      to={to}
+      className="flex w-87 cursor-pointer flex-col overflow-hidden bg-white transition-transform hover:-translate-y-1 lg:w-[183px]"
+    >
       <div className="h-106.5 w-full overflow-hidden lg:h-70">
         <img src={imageUrl} alt={name} className="h-full w-full object-cover" />
       </div>
@@ -21,7 +26,7 @@ const BestsellerProductCard = ({ name, description, price, images }) => {
           <span className="text-success">${price.toFixed(2)}</span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 };
 
