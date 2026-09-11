@@ -1,5 +1,6 @@
 import { Eye, Heart, ShoppingCart, Star } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFavorite } from "../../store/actions/favoritesActions";
 import { addToCart } from "../../store/actions/shoppingCartActions";
 
 const ProductInfo = ({ product }) => {
@@ -15,6 +16,9 @@ const ProductInfo = ({ product }) => {
   const isInStock = stock > 0;
 
   const dispatch = useDispatch();
+
+  const favorites = useSelector((state) => state.favorites.favorites);
+  const isFavorite = favorites.some((item) => item.id === product.id);
 
   return (
     <div className="flex h-118 w-87 flex-col pl-6 lg:w-127.5">
@@ -88,11 +92,16 @@ const ProductInfo = ({ product }) => {
 
         <button
           type="button"
-          className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark"
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-pressed={isFavorite}
+          onClick={() => dispatch(toggleFavorite(product))}
+          className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark transition hover:border-danger"
         >
-          <Heart size={20} />
+          <Heart
+            size={20}
+            className={isFavorite ? "fill-danger text-danger" : "text-dark"}
+          />
         </button>
-
         <button
           type="button"
           disabled={!isInStock}

@@ -1,16 +1,14 @@
 import ClientsSection from "../components/shared/ClientsSection";
 import ShopCategoriesSection from "../components/shop/ShopCategoriesSection";
-import ShopFilterBar from "../components/shop/ShopFilterBar";
+import ShopContentSection from "../components/shop/ShopContentSection";
 import ShopHeaderSection from "../components/shop/ShopHeaderSection";
-import ShopProductsSection from "../components/shop/ShopProductsSection";
 
 const ShopPage = () => {
   return (
     <>
       <ShopHeaderSection />
       <ShopCategoriesSection />
-      <ShopFilterBar />
-      <ShopProductsSection />
+      <ShopContentSection />
       <ClientsSection />
     </>
   );

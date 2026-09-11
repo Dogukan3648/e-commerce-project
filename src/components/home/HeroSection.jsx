@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroCoverDesktop from "../../assets/images/home/hero/hero-cover-desktop.webp";
 import heroCoverMobile from "../../assets/images/home/hero/hero-cover-mobile.webp";
 
@@ -18,12 +19,12 @@ const HeroSection = () => {
             We know how large objects will act, but things on a small scale.
           </p>
 
-          <button
-            type="button"
-            className="flex h-15.5 w-55 items-center justify-center rounded-md bg-primary text-2xl font-bold leading-8 tracking-[0.1px] text-white"
+          <Link
+            to="/shop"
+            className="flex h-15.5 w-55 cursor-pointer items-center justify-center rounded-md bg-primary text-2xl font-bold leading-8 tracking-[0.1px] text-white transition hover:opacity-90"
           >
             SHOP NOW
-          </button>
+          </Link>
         </div>
 
         <div className="mt-16.5 flex h-113 w-full shrink-0 items-center justify-center lg:mt-0 lg:h-full lg:min-w-0 lg:flex-1">

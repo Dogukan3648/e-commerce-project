@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { loadFavorites } from "./store/actions/favoritesActions";
 
 import ScrollToTop from "./components/common/ScrollToTop";
 import Footer from "./layout/Footer";
@@ -14,6 +15,7 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(loadFavorites());
   }, [dispatch]);
 
   return (

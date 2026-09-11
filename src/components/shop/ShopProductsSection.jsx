@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import ShopPagination from "./ShopPagination";
-import ShopProductCard from "./ShopProductCard";
 
 import {
   fetchProducts,
   setLimit,
   setOffset,
 } from "../../store/actions/productActions";
+import ShopPagination from "./ShopPagination";
+import ShopProductCard from "./ShopProductCard";
+import ShopProductListCard from "./ShopProductListCard";
 
-const ShopProductsSection = () => {
+const ShopProductsSection = ({ viewMode }) => {
   const [isLimitReady, setLimitReady] = useState(false);
-  const { categoryId } = useParams();
+  const [isDesktop, setIsDesktop] = useState(false);
 
+  const { categoryId } = useParams();
   const dispatch = useDispatch();
 
   const { productList, fetchState, filter, sort, limit, offset } = useSelector(
@@ -29,6 +31,7 @@ const ShopProductsSection = () => {
       const nextLimit = event.matches ? 12 : 4;
 
       dispatch(setLimit(nextLimit));
+      setIsDesktop(event.matches);
       setLimitReady(true);
     };
 
@@ -69,6 +72,7 @@ const ShopProductsSection = () => {
       </section>
     );
   }
+
   if (fetchState === "FAILED") {
     return (
       <section className="flex min-h-80 items-center justify-center bg-white">
@@ -79,18 +83,21 @@ const ShopProductsSection = () => {
     );
   }
 
+  const ProductItem =
+    isDesktop && viewMode === "list" ? ShopProductListCard : ShopProductCard;
+
   return (
     <section className="bg-white">
       <div className="mx-auto flex flex-col items-center gap-12 py-20 lg:w-[1124px] lg:py-12">
-        <div className="flex flex-col items-center gap-[30px] lg:hidden">
+        <div
+          className={
+            !isDesktop || viewMode === "grid"
+              ? "flex w-full flex-col items-center gap-[30px] px-6 lg:w-[1050px] lg:flex-row lg:flex-wrap lg:items-stretch lg:gap-x-[30px] lg:gap-y-12 lg:px-0"
+              : "flex w-full flex-col gap-6 px-4 lg:w-[1050px] lg:px-0"
+          }
+        >
           {productList.map((product) => (
-            <ShopProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        <div className="hidden w-[1050px] flex-wrap gap-x-[30px] gap-y-12 lg:flex">
-          {productList.map((product) => (
-            <ShopProductCard key={product.id} product={product} />
+            <ProductItem key={product.id} product={product} />
           ))}
         </div>
 

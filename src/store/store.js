@@ -8,6 +8,7 @@ import { createLogger } from "redux-logger";
 import { thunk } from "redux-thunk";
 
 import clientReducer from "./reducers/clientReducer";
+import favoritesReducer from "./reducers/favoritesReducer";
 import productReducer from "./reducers/productReducer";
 import shoppingCartReducer from "./reducers/shoppingCartReducer";
 
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   client: clientReducer,
   product: productReducer,
   shoppingCart: shoppingCartReducer,
+  favorites: favoritesReducer,
 });
 
 const middlewares = [thunk];

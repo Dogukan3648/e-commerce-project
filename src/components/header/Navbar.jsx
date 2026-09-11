@@ -5,14 +5,15 @@ import {
   Search,
   ShoppingCart,
   User,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
-import CartDropdown from "./CartDropdown";
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
 import { getCategoryPath } from "../../utils/categoryUtils";
+import CartDropdown from "./CartDropdown";
 
 const getGravatarUrl = async (email) => {
   const normalizedEmail = email.trim().toLowerCase();
@@ -31,6 +32,7 @@ const getGravatarUrl = async (email) => {
 const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [avatar, setAvatar] = useState({
     email: "",
@@ -40,6 +42,10 @@ const Navbar = () => {
   const user = useSelector((state) => state.client.user);
   const categories = useSelector((state) => state.product.categories);
   const cart = useSelector((state) => state.shoppingCart.cart);
+  const favorites = useSelector((state) => state.favorites.favorites);
+
+  const history = useHistory();
+  const location = useLocation();
 
   const cartItemCount = cart.reduce((total, item) => total + item.count, 0);
 
@@ -50,8 +56,6 @@ const Navbar = () => {
   const menCategories = categories.filter(
     (category) => category.gender === "e",
   );
-
-  const location = useLocation();
 
   const from =
     location.pathname === "/login"
@@ -81,10 +85,30 @@ const Navbar = () => {
 
   const avatarUrl = avatar.email === user.email ? avatar.url : "";
 
+  const closeMobileNavigation = () => {
+    setIsMobileMenuOpen(false);
+    setIsCartOpen(false);
+  };
+
+  const handleSearchClick = () => {
+    closeMobileNavigation();
+
+    history.push({
+      pathname: "/shop",
+      state: {
+        focusSearch: true,
+      },
+    });
+  };
+
   return (
-    <div className="pb-24 lg:mt-3 lg:flex lg:h-14 lg:w-full lg:items-center lg:pr-5 lg:pl-10 lg:pb-0">
+    <div className="lg:mt-3 lg:flex lg:h-14 lg:w-full lg:items-center lg:pr-5 lg:pl-10">
       <div className="relative flex h-28 items-center justify-between px-9 lg:h-auto lg:w-47 lg:px-0">
-        <Link to="/" className="text-2xl font-bold leading-8">
+        <Link
+          to="/"
+          onClick={closeMobileNavigation}
+          className="text-2xl font-bold leading-8"
+        >
           Bandage
         </Link>
 
@@ -92,6 +116,7 @@ const Navbar = () => {
           <button
             type="button"
             aria-label="Search"
+            onClick={handleSearchClick}
             className="cursor-pointer p-2"
           >
             <Search size={24} />
@@ -101,18 +126,47 @@ const Navbar = () => {
             type="button"
             aria-label="Shopping cart"
             aria-expanded={isCartOpen}
-            onClick={() => setIsCartOpen((prev) => !prev)}
-            className="cursor-pointer p-2"
+            onClick={() => {
+              setIsCartOpen((prev) => !prev);
+              setIsMobileMenuOpen(false);
+            }}
+            className="relative cursor-pointer p-2"
           >
             <ShoppingCart size={24} />
+
+            {cartItemCount > 0 && (
+              <span className="absolute top-0 right-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                {cartItemCount}
+              </span>
+            )}
           </button>
+
+          <Link
+            to="/favorites"
+            aria-label="Favorites"
+            onClick={closeMobileNavigation}
+            className="relative cursor-pointer p-2"
+          >
+            <Heart size={24} />
+
+            {favorites.length > 0 && (
+              <span className="absolute top-0 right-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                {favorites.length}
+              </span>
+            )}
+          </Link>
 
           <button
             type="button"
-            aria-label="Menu"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => {
+              setIsMobileMenuOpen((prev) => !prev);
+              setIsCartOpen(false);
+            }}
             className="cursor-pointer p-2"
           >
-            <Menu size={24} />
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
@@ -123,17 +177,24 @@ const Navbar = () => {
         )}
       </div>
 
-      <nav className="mt-12 lg:ml-10 lg:mt-0" aria-label="Main navigation">
+      <nav
+        className={`${
+          isMobileMenuOpen ? "block" : "hidden"
+        } mt-8 pb-12 lg:ml-10 lg:mt-0 lg:block lg:pb-0`}
+        aria-label="Main navigation"
+      >
         <ul className="flex flex-col items-center gap-8 text-3xl font-normal leading-normal text-muted lg:flex-row lg:gap-4 lg:text-sm lg:font-bold lg:leading-6">
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
+              Home
+            </Link>
           </li>
 
           <li className="lg:hidden">
-            <Link to="/shop">Product</Link>
+            <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)}>
+              Shop
+            </Link>
           </li>
-
-          <li className="lg:hidden">Pricing</li>
 
           <li className="group relative hidden lg:block">
             <div className="flex items-center gap-2 px-1.5">
@@ -177,21 +238,23 @@ const Navbar = () => {
             </div>
           </li>
 
-          <li className="hidden lg:block">
-            <Link to="/about">About</Link>
-          </li>
-
-          <li className="hidden lg:block">Blog</li>
-
           <li>
-            <Link to="/contact">Contact</Link>
+            <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>
+              About
+            </Link>
           </li>
 
           <li>
-            <Link to="/team">Team</Link>
+            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+              Contact
+            </Link>
           </li>
 
-          <li className="hidden lg:block">Pages</li>
+          <li>
+            <Link to="/team" onClick={() => setIsMobileMenuOpen(false)}>
+              Team
+            </Link>
+          </li>
         </ul>
       </nav>
 
@@ -256,6 +319,7 @@ const Navbar = () => {
         <button
           type="button"
           aria-label="Search"
+          onClick={handleSearchClick}
           className="cursor-pointer rounded-full p-4"
         >
           <Search size={16} />
@@ -277,15 +341,15 @@ const Navbar = () => {
           {isCartOpen && <CartDropdown cart={cart} />}
         </div>
 
-        <button
-          type="button"
+        <Link
+          to="/favorites"
           aria-label="Favorites"
           className="flex cursor-pointer items-center gap-1 rounded-full p-4"
         >
           <Heart size={16} />
 
-          <span className="text-xs leading-4">1</span>
-        </button>
+          <span className="text-xs leading-4">{favorites.length}</span>
+        </Link>
       </div>
     </div>
   );
