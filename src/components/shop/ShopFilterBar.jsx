@@ -14,6 +14,8 @@ const ShopFilterBar = ({ viewMode, onViewChange }) => {
 
   const [selectedSort, setSelectedSort] = useState(sort);
 
+  const [searchTerm, setSearchTerm] = useState(filter);
+
   useEffect(() => {
     if (location.state?.focusSearch) {
       searchInputRef.current?.focus();
@@ -24,11 +26,25 @@ const ShopFilterBar = ({ viewMode, onViewChange }) => {
     dispatch(setSort(selectedSort));
   };
 
+  useEffect(() => {
+    if (searchTerm === filter) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      dispatch(setFilter(searchTerm));
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [dispatch, searchTerm, filter]);
+
   return (
     <section className="bg-white py-6">
       <div className="mx-auto flex w-full flex-col items-center gap-6 lg:max-w-263 lg:flex-row lg:justify-between lg:gap-0">
         <p className="text-sm font-bold leading-6 tracking-[0.2px] text-muted">
-          Showing all {total} results
+          Showing {total} results
         </p>
 
         <div className="hidden items-center gap-4 lg:flex">
@@ -74,8 +90,8 @@ const ShopFilterBar = ({ viewMode, onViewChange }) => {
           <input
             ref={searchInputRef}
             type="text"
-            value={filter}
-            onChange={(event) => dispatch(setFilter(event.target.value))}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search Products"
             className="h-12.5 w-52 rounded-md border border-[#ddd] bg-[#f9f9f9] px-4 text-sm text-muted outline-none transition-colors focus:border-primary lg:w-60"
           />

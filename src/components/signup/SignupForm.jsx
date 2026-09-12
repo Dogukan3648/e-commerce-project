@@ -1,9 +1,10 @@
 import { ChevronDown, LoaderCircle } from "lucide-react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import apiClient from "../../api/apiClient";
 import { fetchRoles } from "../../store/actions/clientActions";
 import StoreFields from "./StoreFields";
@@ -12,11 +13,21 @@ const SignupForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     shouldUnregister: true,
+  });
+
+  const password = useWatch({
+    control,
+    name: "password",
+  });
+
+  const selectedRoleId = useWatch({
+    control,
+    name: "role_id",
   });
 
   const dispatch = useDispatch();
@@ -39,8 +50,6 @@ const SignupForm = () => {
     }
   }, [roles, setValue]);
 
-  const selectedRoleId = watch("role_id");
-
   const storeRole = roles.find((role) => role.code === "store");
 
   const isStore = selectedRoleId === storeRole?.id;
@@ -61,6 +70,7 @@ const SignupForm = () => {
         bank_account: data.store.bank_account,
       };
     }
+
     try {
       await apiClient.post("/signup", payload);
 
@@ -192,7 +202,7 @@ const SignupForm = () => {
             {...register("confirmPassword", {
               required: "Please confirm your password",
               validate: (value) =>
-                value === watch("password") || "Passwords do not match",
+                value === password || "Passwords do not match",
             })}
             placeholder="Confirm Password"
             className="h-12 w-full rounded-md border border-border-light bg-light-gray px-5 text-sm leading-7 tracking-[0.2px] text-dark outline-none placeholder:text-muted focus:border-primary"

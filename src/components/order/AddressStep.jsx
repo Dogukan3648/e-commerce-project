@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import {
   createAddress,
   deleteAddress,
@@ -47,18 +48,25 @@ const AddressStep = ({
       return;
     }
 
-    await dispatch(deleteAddress(addressId));
+    try {
+      await dispatch(deleteAddress(addressId));
 
-    if (selectedShippingAddressId === addressId) {
-      setSelectedShippingAddressId(null);
-    }
+      if (selectedShippingAddressId === addressId) {
+        setSelectedShippingAddressId(null);
+      }
 
-    if (selectedReceiptAddressId === addressId) {
-      setSelectedReceiptAddressId(null);
-    }
+      if (selectedReceiptAddressId === addressId) {
+        setSelectedReceiptAddressId(null);
+      }
 
-    if (editingAddress?.id === addressId) {
-      handleCancelForm();
+      if (editingAddress?.id === addressId) {
+        handleCancelForm();
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Address could not be deleted. Please try again.",
+      );
     }
   };
 
@@ -78,6 +86,11 @@ const AddressStep = ({
       }
 
       handleCancelForm();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Address could not be saved. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }

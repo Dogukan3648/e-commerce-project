@@ -83,6 +83,21 @@ const ShopProductsSection = ({ viewMode }) => {
     );
   }
 
+  if (fetchState === "FETCHED" && productList.length === 0) {
+    return (
+      <section className="flex min-h-80 items-center justify-center bg-white px-6">
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-dark">No products found</h2>
+
+          <p className="mt-2 max-w-sm text-sm leading-6 text-muted">
+            Try adjusting your search or filters to find what you are looking
+            for.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   const ProductItem =
     isDesktop && viewMode === "list" ? ShopProductListCard : ShopProductCard;
 

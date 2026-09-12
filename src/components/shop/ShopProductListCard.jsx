@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ImageOff, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -31,7 +31,17 @@ const ShopProductListCard = ({ product }) => {
         to={productPath}
         className="flex h-40 w-28 shrink-0 cursor-pointer items-center justify-center bg-light-gray lg:h-56 lg:w-56"
       >
-        <img src={imageUrl} alt={name} className="h-full w-full object-cover" />
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-light-gray text-muted">
+            <ImageOff size={36} />
+          </div>
+        )}
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col px-4 py-4 lg:px-8 lg:py-6">

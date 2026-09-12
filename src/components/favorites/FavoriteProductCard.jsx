@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ImageOff, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleFavorite } from "../../store/actions/favoritesActions";
@@ -28,11 +28,17 @@ const FavoriteProductCard = ({ product }) => {
     <article className="relative flex w-full flex-col overflow-hidden rounded-lg border border-border-light bg-white shadow-sm transition-transform hover:-translate-y-1 lg:w-[330px]">
       <Link to={productPath} className="cursor-pointer">
         <div className="flex h-80 items-center justify-center bg-light-gray p-4">
-          <img
-            src={imageUrl}
-            alt={name}
-            className="h-full w-full object-contain"
-          />
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={name}
+              className="h-full w-full object-contain"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-light-gray text-muted">
+              <ImageOff size={40} />
+            </div>
+          )}
         </div>
       </Link>
 

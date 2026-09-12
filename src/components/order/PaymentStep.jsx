@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   createCreditCard,
   deleteCreditCard,
@@ -84,11 +85,15 @@ const PaymentStep = ({
       }
 
       handleCancelForm();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Card could not be saved. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
-
   const handleDeleteCard = async (cardId) => {
     const shouldDelete = window.confirm(
       "Are you sure you want to delete this card?",
@@ -98,14 +103,21 @@ const PaymentStep = ({
       return;
     }
 
-    await dispatch(deleteCreditCard(cardId));
+    try {
+      await dispatch(deleteCreditCard(cardId));
 
-    if (selectedCardId === cardId) {
-      handleSelectCard(null);
-    }
+      if (selectedCardId === cardId) {
+        handleSelectCard(null);
+      }
 
-    if (editingCard?.id === cardId) {
-      handleCancelForm();
+      if (editingCard?.id === cardId) {
+        handleCancelForm();
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Card could not be deleted. Please try again.",
+      );
     }
   };
 
