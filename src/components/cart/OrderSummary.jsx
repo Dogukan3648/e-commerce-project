@@ -61,6 +61,14 @@ const OrderSummary = ({
           >
             {actionLabel}
           </button>
+        ) : actionDisabled ? (
+          <button
+            type="button"
+            disabled
+            className={`${actionClassName} cursor-not-allowed opacity-50`}
+          >
+            {actionLabel}
+          </button>
         ) : (
           <Link to={actionTo} className={`${actionClassName} cursor-pointer`}>
             {actionLabel}

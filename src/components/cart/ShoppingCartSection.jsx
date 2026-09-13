@@ -58,6 +58,7 @@ const ShoppingCartSection = () => {
               shippingPayment={shippingPayment}
               discount={discount}
               grandTotal={grandTotal}
+              actionDisabled={selectedItems.length === 0}
             />
           </div>
         )}

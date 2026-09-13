@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 const CartDropdown = ({ cart }) => {
   const cartItemCount = cart.reduce((total, item) => total + item.count, 0);
 
+  const hasSelectedItems = cart.some((item) => item.checked);
+
   return (
     <div className="absolute top-full right-4 z-50 w-72 overflow-hidden rounded-lg border border-soft-gray bg-white shadow-lg lg:right-0 lg:w-80">
       <div className="px-4 py-4">
@@ -54,12 +56,22 @@ const CartDropdown = ({ cart }) => {
           Go to Cart
         </Link>
 
-        <Link
-          to="/create-order"
-          className="flex flex-1 cursor-pointer items-center justify-center whitespace-nowrap rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white"
-        >
-          Complete Order
-        </Link>
+        {hasSelectedItems ? (
+          <Link
+            to="/create-order"
+            className="flex flex-1 cursor-pointer items-center justify-center whitespace-nowrap rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white"
+          >
+            Complete Order
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="flex flex-1 cursor-not-allowed items-center justify-center whitespace-nowrap rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white opacity-50"
+          >
+            Complete Order
+          </button>
+        )}
       </div>
     </div>
   );
