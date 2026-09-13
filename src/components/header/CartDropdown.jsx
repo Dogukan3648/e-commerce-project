@@ -54,12 +54,12 @@ const CartDropdown = ({ cart }) => {
           Go to Cart
         </Link>
 
-        <button
-          type="button"
+        <Link
+          to="/create-order"
           className="flex flex-1 cursor-pointer items-center justify-center whitespace-nowrap rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white"
         >
           Complete Order
-        </button>
+        </Link>
       </div>
     </div>
   );

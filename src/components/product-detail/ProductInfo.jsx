@@ -85,11 +85,12 @@ const ProductInfo = ({ product }) => {
       <div className="mt-12 flex items-center gap-2.5 lg:mt-16.5">
         <button
           type="button"
-          className="flex h-11 w-37 items-center justify-center cursor-pointer rounded-md bg-primary text-sm font-bold leading-6 tracking-[0.2px] text-white"
+          disabled={!isInStock}
+          onClick={() => dispatch(addToCart(product))}
+          className="flex h-11 w-37 cursor-pointer items-center justify-center rounded-md bg-primary text-sm font-bold leading-6 tracking-[0.2px] text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Select Options
+          Add to Cart
         </button>
-
         <button
           type="button"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}

@@ -12,8 +12,8 @@ const TeamSection = () => {
           </h1>
 
           <p className="w-75 text-sm font-normal leading-5 tracking-[0.2px] text-muted lg:w-[469px]">
-            Problems trying to resolve the conflict between the two major realms
-            of Classical physics: Newtonian mechanics
+            Meet the people behind the design and development of our e-commerce
+            experience.
           </p>
         </div>
 

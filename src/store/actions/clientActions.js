@@ -177,3 +177,13 @@ export const deleteCreditCard = (cardId) => async (dispatch) => {
 
   await dispatch(fetchCreditCards());
 };
+
+export const logoutUser = () => (dispatch) => {
+  dispatch(setUser({}));
+  dispatch(setAddressList([]));
+  dispatch(setCreditCards([]));
+
+  localStorage.removeItem("token");
+
+  delete apiClient.defaults.headers.common.Authorization;
+};

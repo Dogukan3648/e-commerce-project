@@ -18,7 +18,13 @@ const AboutPage = () => {
         description="Problems trying to resolve the conflict between the two major realms of Classical physics: Newtonian mechanics"
       />
       <AboutVideoSection />
-      <ContactHeroSection />
+      <ContactHeroSection
+        eyebrow="WORK WITH US"
+        title="Now Let’s grow Yours"
+        description="Have a question, idea, or feedback? Get in touch with us and help us improve your shopping experience."
+        buttonText="CONTACT US"
+        withDesktopTopMargin={false}
+      />
     </>
   );
 };

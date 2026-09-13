@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import aboutHeroDesktop from "../../assets/images/about/about-hero-desktop.png";
 import aboutHeroMobile from "../../assets/images/about/about-hero-mobile.png";
 
@@ -19,12 +20,12 @@ const AboutHeroSection = () => {
             <span className="lg:hidden"> just do not act that way.</span>
           </p>
 
-          <button
-            type="button"
+          <Link
+            to="/contact"
             className="rounded-md bg-primary px-10 py-4 text-sm font-bold leading-5.5 tracking-[0.2px] text-white"
           >
             Get Quote Now
-          </button>
+          </Link>
         </div>
 
         <div className="flex h-110 w-full items-end justify-center lg:hidden">

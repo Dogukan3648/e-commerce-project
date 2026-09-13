@@ -8,10 +8,11 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
 import shopChevronIcon from "../../assets/icons/shop-chevron.svg";
+import { logoutUser } from "../../store/actions/clientActions";
 import { getCategoryPath } from "../../utils/categoryUtils";
 import CartDropdown from "./CartDropdown";
 
@@ -44,6 +45,7 @@ const Navbar = () => {
   const cart = useSelector((state) => state.shoppingCart.cart);
   const favorites = useSelector((state) => state.favorites.favorites);
 
+  const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
 
@@ -99,6 +101,16 @@ const Navbar = () => {
         focusSearch: true,
       },
     });
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+
+    setIsUserMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsCartOpen(false);
+
+    history.push("/");
   };
 
   return (
@@ -255,6 +267,49 @@ const Navbar = () => {
               Team
             </Link>
           </li>
+
+          {user.email ? (
+            <>
+              <li className="lg:hidden">
+                <Link
+                  to="/previous-orders"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Previous Orders
+                </Link>
+              </li>
+
+              <li className="lg:hidden">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="cursor-pointer"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="lg:hidden">
+                <Link
+                  to={{
+                    pathname: "/login",
+                    state: { from },
+                  }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </li>
+
+              <li className="lg:hidden">
+                <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                  Register
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
 
@@ -294,6 +349,15 @@ const Navbar = () => {
                 >
                   Previous Orders
                 </Link>
+
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleLogout}
+                  className="block w-full cursor-pointer px-4 py-2 text-left text-sm font-medium text-danger hover:bg-light-gray"
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>
@@ -325,12 +389,22 @@ const Navbar = () => {
           <Search size={16} />
         </button>
 
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsCartOpen(true)}
+          onMouseLeave={() => setIsCartOpen(false)}
+          onFocus={() => setIsCartOpen(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setIsCartOpen(false);
+            }
+          }}
+        >
           <button
             type="button"
             aria-label="Shopping cart"
             aria-expanded={isCartOpen}
-            onClick={() => setIsCartOpen((prev) => !prev)}
+            aria-haspopup="true"
             className="flex cursor-pointer items-center gap-1 rounded-full p-4"
           >
             <ShoppingCart size={16} />
