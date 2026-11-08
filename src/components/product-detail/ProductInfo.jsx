@@ -1,5 +1,6 @@
 import { Eye, Heart, ShoppingCart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { toggleFavorite } from "../../store/actions/favoritesActions";
 import { addToCart } from "../../store/actions/shoppingCartActions";
 
@@ -19,6 +20,31 @@ const ProductInfo = ({ product }) => {
 
   const favorites = useSelector((state) => state.favorites.favorites);
   const isFavorite = favorites.some((item) => item.id === product.id);
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(product));
+
+    if (isFavorite) {
+      toast.info("Ürün favorilerinizden kaldırıldı.", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+    } else {
+      toast.success("Ürün favorilerinize eklendi.", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+    }
+  };
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+
+    toast.success("Ürün sepetinize eklenmiştir.", {
+      position: "top-right",
+      autoClose: 2500,
+    });
+  };
 
   return (
     <div className="flex h-118 w-87 flex-col pl-6 lg:w-127.5">
@@ -86,7 +112,7 @@ const ProductInfo = ({ product }) => {
         <button
           type="button"
           disabled={!isInStock}
-          onClick={() => dispatch(addToCart(product))}
+          onClick={handleAddToCart}
           className="flex h-11 w-37 cursor-pointer items-center justify-center rounded-md bg-primary text-sm font-bold leading-6 tracking-[0.2px] text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to Cart
@@ -95,7 +121,7 @@ const ProductInfo = ({ product }) => {
           type="button"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           aria-pressed={isFavorite}
-          onClick={() => dispatch(toggleFavorite(product))}
+          onClick={handleToggleFavorite}
           className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark transition hover:border-danger"
         >
           <Heart
@@ -106,7 +132,7 @@ const ProductInfo = ({ product }) => {
         <button
           type="button"
           disabled={!isInStock}
-          onClick={() => dispatch(addToCart(product))}
+          onClick={handleAddToCart}
           className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           <ShoppingCart size={20} />

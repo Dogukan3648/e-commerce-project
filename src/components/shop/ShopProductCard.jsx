@@ -1,6 +1,7 @@
 import { Heart, ImageOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { toggleFavorite } from "../../store/actions/favoritesActions";
 import { createSlug, getCategoryPath } from "../../utils/categoryUtils";
 
@@ -23,6 +24,23 @@ const ShopProductCard = ({ product }) => {
 
   const imageUrl =
     images?.find((image) => image.index === 0)?.url ?? images?.[0]?.url ?? "";
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(product));
+
+    if (isFavorite) {
+      toast.info("Ürün favorilerinizden kaldırıldı.", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+    } else {
+      toast.success("Ürün favorilerinize eklendi.", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+    }
+  };
+
   return (
     <div className="relative flex w-87 flex-col overflow-hidden bg-white transition-transform hover:-translate-y-1 lg:w-60">
       <Link to={productPath} className="flex cursor-pointer flex-col">
@@ -56,7 +74,7 @@ const ShopProductCard = ({ product }) => {
         type="button"
         aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         aria-pressed={isFavorite}
-        onClick={() => dispatch(toggleFavorite(product))}
+        onClick={handleToggleFavorite}
         className="absolute top-3 right-3 flex size-10 cursor-pointer items-center justify-center rounded-full bg-white shadow-md transition hover:scale-105"
       >
         <Heart
