@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class AddressServiceImpl implements AddressService{
@@ -23,20 +23,46 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
-    public Address addAddress(Address address) {
+    public Address getAddressById(long id) {
+        return addressRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Address save(Address address) {
         return addressRepository.save(address);
     }
 
     @Override
-    public void deleteAddress(long addressId, long userId) {
-        Optional<Address> optionalAddress = addressRepository.findById(addressId);
+    public Address updateAddress(long id, long userId, Address address) {
+        Address existingAddress = getAddressById(id);
 
-        if (optionalAddress.isPresent()){
-            Address address = optionalAddress.get();
+        if (existingAddress == null || address == null) {
+            return null;
+        }
 
-            if (address.getUser().getId().equals(userId)){
-                addressRepository.delete(address);
-            }
+        if (!existingAddress.getUser().getId().equals(userId)) {
+            return null;
+        }
+
+        existingAddress.setAddress(address.getAddress());
+        existingAddress.setCity(address.getCity());
+        existingAddress.setDistrict(address.getDistrict());
+        existingAddress.setName(address.getName());
+        existingAddress.setNeighborhood(address.getNeighborhood());
+        existingAddress.setPhone(address.getPhone());
+        existingAddress.setSurname(address.getSurname());
+        existingAddress.setTitle(address.getTitle());
+
+        return addressRepository.save(existingAddress);
+    }
+    @Override
+    public void deleteAddress(long id, long userId) {
+        Address address = getAddressById(id);
+
+        if (address != null &&
+                address.getUser().getId().equals(userId)) {
+            addressRepository.delete(address);
         }
     }
+
 }

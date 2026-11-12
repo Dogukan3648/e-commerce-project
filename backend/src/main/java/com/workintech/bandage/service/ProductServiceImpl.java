@@ -99,6 +99,14 @@ public class ProductServiceImpl implements ProductService{
             sorting = Sort.by("rating").descending()
                     .and(Sort.by("id").ascending());
         }
+        else if ("sell_count:desc".equals(sort)) {
+            sorting = Sort.by("sellCount").descending()
+                    .and(Sort.by("id").ascending());
+        }
+
+        if (limit <= 0 || offset < 0 || offset % limit != 0) {
+            return Page.empty();
+        }
 
 
         PageRequest pageable = PageRequest.of(
@@ -108,6 +116,40 @@ public class ProductServiceImpl implements ProductService{
         );
 
         return productRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Product save(Product product) {
+        return productRepository.save(product);
+    }
+
+    @Override
+    public Product updateProduct(long id, Product product) {
+        Product existingProduct = getProductById(id);
+
+        if (existingProduct == null || product == null){
+            return null;
+        }
+        existingProduct.setCategory(product.getCategory());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setName(product.getName());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setRating(product.getRating());
+        existingProduct.setSellCount(product.getSellCount());
+        existingProduct.setStock(product.getStock());
+        existingProduct.setStore(product.getStore());
+
+        return productRepository.save(existingProduct);
+    }
+
+    @Override
+    public void deleteProduct(long id) {
+        Product product = getProductById(id);
+
+        if (product != null){
+            productRepository.delete(product);
+        }
+
     }
 
 }

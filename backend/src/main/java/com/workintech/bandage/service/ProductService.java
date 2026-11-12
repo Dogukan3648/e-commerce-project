@@ -20,4 +20,8 @@ public interface ProductService {
       int limit,
       int offset
     );
+
+      Product save(Product product);
+      Product updateProduct(long id,Product product);
+      void deleteProduct(long id);
 }
