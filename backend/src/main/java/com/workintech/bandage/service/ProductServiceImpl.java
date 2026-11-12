@@ -120,6 +120,10 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product save(Product product) {
+        if (product == null || product.getId() != null){
+            return null;
+        }
+
         return productRepository.save(product);
     }
 

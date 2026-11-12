@@ -31,6 +31,10 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Category save(Category category) {
+        if (category == null || category.getId() != null) {
+            return null;
+        }
+
         return categoryRepository.save(category);
     }
 

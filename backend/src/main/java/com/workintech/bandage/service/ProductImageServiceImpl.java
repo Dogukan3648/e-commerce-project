@@ -29,6 +29,11 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public ProductImage save(ProductImage productImage) {
+
+        if (productImage == null || productImage.getId() != null){
+            return null;
+        }
+
         return productImageRepository.save(productImage);
     }
 
