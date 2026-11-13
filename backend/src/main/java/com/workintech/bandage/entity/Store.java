@@ -1,13 +1,12 @@
 package com.workintech.bandage.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "stores")
 public class Store {
@@ -21,7 +20,7 @@ public class Store {
     @Column(name = "bank_account")
     private String bankAccount;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false,unique = true)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
