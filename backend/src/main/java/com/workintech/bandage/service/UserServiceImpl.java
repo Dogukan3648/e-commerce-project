@@ -1,4 +1,3 @@
-
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.Role;
@@ -19,9 +18,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final StoreRepository storeRepository;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           StoreRepository storeRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.storeRepository = storeRepository;
@@ -87,26 +84,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUser(long id, User updatedUser) {
+    public User updateUser(long id, User user) {
         User existingUser = getUserById(id);
 
-        if (existingUser == null || updatedUser == null) {
+        if (existingUser == null || user == null) {
             return null;
         }
 
-        if (updatedUser.getEmail() != null
-                && !updatedUser.getEmail().equals(existingUser.getEmail())) {
+        if (user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())) {
 
-            if (userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
+            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
                 return null;
             }
 
-            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setEmail(user.getEmail());
             existingUser.setEmailVerified(false);
         }
 
-        if (updatedUser.getName() != null) {
-            existingUser.setName(updatedUser.getName());
+        if (user.getName() != null) {
+            existingUser.setName(user.getName());
         }
 
         return userRepository.save(existingUser);

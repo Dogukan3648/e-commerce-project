@@ -12,7 +12,7 @@ public class EmailVerificationTokenServiceImpl implements EmailVerificationToken
     private EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     @Autowired
-    public EmailVerificationTokenServiceImpl(EmailVerificationTokenRepository emailVerificationTokenRepository){
+    public EmailVerificationTokenServiceImpl(EmailVerificationTokenRepository emailVerificationTokenRepository) {
         this.emailVerificationTokenRepository = emailVerificationTokenRepository;
     }
 
@@ -23,7 +23,7 @@ public class EmailVerificationTokenServiceImpl implements EmailVerificationToken
 
     @Override
     public EmailVerificationToken save(EmailVerificationToken emailVerificationToken) {
-        if (emailVerificationToken == null || emailVerificationToken.getId() != null){
+        if (emailVerificationToken == null || emailVerificationToken.getId() != null) {
             return null;
         }
         return emailVerificationTokenRepository.save(emailVerificationToken);
@@ -33,7 +33,10 @@ public class EmailVerificationTokenServiceImpl implements EmailVerificationToken
     public EmailVerificationToken markTokenAsUsed(long id) {
         EmailVerificationToken existingToken = emailVerificationTokenRepository.findById(id).orElse(null);
 
-        if (existingToken == null){
+        if (existingToken == null) {
+            return null;
+        }
+        if (existingToken.getUsedAt() != null){
             return null;
         }
         existingToken.setUsedAt(OffsetDateTime.now());
