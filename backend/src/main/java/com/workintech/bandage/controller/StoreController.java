@@ -1,6 +1,9 @@
 package com.workintech.bandage.controller;
 
+import com.workintech.bandage.dto.StoreRequestDto;
+import com.workintech.bandage.dto.StoreResponseDto;
 import com.workintech.bandage.entity.Store;
+import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,29 +16,67 @@ public class StoreController {
     private StoreService storeService;
 
     @Autowired
-    public StoreController(StoreService storeService){
+    public StoreController(StoreService storeService) {
         this.storeService = storeService;
     }
 
     @GetMapping
-    public List<Store> getAllStores(){
-        return storeService.getAllStores();
+    public List<StoreResponseDto> getAllStores() {
+        return storeService.getAllStores().stream().map(this::toDto).toList();
     }
+
     @GetMapping("/{id}")
-    public Store getStoreById(@PathVariable long id){
-        return storeService.getStoreById(id);
+    public StoreResponseDto getStoreById(@PathVariable long id) {
+       Store store = storeService.getStoreById(id);
+
+       return toDto(store);
     }
+
     @PostMapping
-    public Store save(@RequestBody Store store){
-        return storeService.save(store);
+    public StoreResponseDto save(@RequestBody StoreRequestDto request) {
+        Store store = toEntity(request);
+
+        Store savedStore = storeService.save(store);
+
+        return toDto(savedStore);
     }
+
     @PutMapping("/{id}")
-    public Store updateStore(@PathVariable long id,@RequestBody Store store){
-        return storeService.updateStore(id, store);
+    public StoreResponseDto updateStore(@PathVariable long id, @RequestBody StoreRequestDto request) {
+        Store store = toEntity(request);
+
+        Store updateStore = storeService.updateStore(id,store);
+
+        return toDto(updateStore);
     }
+
     @DeleteMapping("/{id}")
-    public void deleteStore(@PathVariable long id){
+    public void deleteStore(@PathVariable long id) {
         storeService.deleteStore(id);
+    }
+
+    private StoreResponseDto toDto(Store store){
+        if (store == null){
+            return null;
+        }
+        return new StoreResponseDto(store.getId(),store.getUser().getId(),store.getName(),store.getPhone());
+
+    }
+
+    private Store toEntity(StoreRequestDto request){
+        Store store = new Store();
+
+        store.setName(request.name());
+        store.setPhone(request.phone());
+        store.setTaxNo(request.taxNo());
+        store.setBankAccount(request.bankAccount());
+
+        if (request.userId() != null){
+            User user = new User();
+            user.setId(request.userId());
+            store.setUser(user);
+        }
+        return store;
     }
 
 }

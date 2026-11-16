@@ -1,6 +1,8 @@
 package com.workintech.bandage.controller;
 
+import com.workintech.bandage.dto.CreditCardDto;
 import com.workintech.bandage.entity.CreditCard;
+import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.CreditCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,27 +15,65 @@ public class CreditCardController {
     private CreditCardService creditCardService;
 
     @Autowired
-    public CreditCardController(CreditCardService creditCardService){
+    public CreditCardController(CreditCardService creditCardService) {
         this.creditCardService = creditCardService;
     }
+
     @GetMapping("/user/{userId}")
-    public List<CreditCard> getCardsByUserId(@PathVariable long userId){
-        return creditCardService.getCardsByUserId(userId);
+    public List<CreditCardDto> getCardsByUserId(@PathVariable long userId) {
+       return creditCardService.getCardsByUserId(userId).stream().map(this::toDto).toList();
     }
+
     @GetMapping("/{id}")
-    public CreditCard getCardById(@PathVariable long id){
-        return creditCardService.getCardById(id);
+    public CreditCardDto getCardById(@PathVariable long id) {
+        CreditCard creditCard = creditCardService.getCardById(id);
+
+        return toDto(creditCard);
     }
+
     @PostMapping
-    public CreditCard save(@RequestBody CreditCard creditCard){
-        return creditCardService.save(creditCard);
+    public CreditCardDto save(@RequestBody CreditCardDto request) {
+        CreditCard creditCard = toEntity(request);
+
+        CreditCard savedCard = creditCardService.save(creditCard);
+
+        return toDto(savedCard);
     }
+
     @PutMapping("/{id}/user/{userId}")
-    public CreditCard updateCreditCard(@PathVariable long id,@PathVariable long userId,@RequestBody CreditCard creditCard){
-        return creditCardService.updateCreditCard(id, userId, creditCard);
+    public CreditCardDto updateCreditCard(@PathVariable long id, @PathVariable long userId, @RequestBody CreditCardDto request) {
+        CreditCard creditCard = toEntity(request);
+
+        CreditCard updateCard = creditCardService.updateCreditCard(id,userId,creditCard);
+
+        return toDto(updateCard);
     }
+
     @DeleteMapping("/{id}/user/{userId}")
-    public void deleteCreditCard(@PathVariable long id,@PathVariable long userId){
+    public void deleteCreditCard(@PathVariable long id, @PathVariable long userId) {
         creditCardService.deleteCreditCard(id, userId);
+    }
+    private CreditCardDto toDto(CreditCard creditCard){
+        if (creditCard == null){
+            return null;
+        }
+        return new CreditCardDto(creditCard.getId(),creditCard.getUser().getId(),creditCard.getNameOnCard(),
+                creditCard.getLastFour(),creditCard.getExpireMonth(),creditCard.getExpireYear());
+    }
+    private CreditCard toEntity(CreditCardDto request){
+        CreditCard creditCard = new CreditCard();
+
+        creditCard.setNameOnCard(request.nameOnCard());
+        creditCard.setLastFour(request.lastFour());
+        creditCard.setExpireYear(request.expireYear());
+        creditCard.setExpireMonth(request.expireMonth());
+
+        if (request.userId() != null){
+            User user = new User();
+            user.setId(request.userId());
+            creditCard.setUser(user);
+        }
+        return creditCard;
+
     }
 }

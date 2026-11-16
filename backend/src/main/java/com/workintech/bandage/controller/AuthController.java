@@ -1,6 +1,7 @@
 package com.workintech.bandage.controller;
 
 import com.workintech.bandage.dto.RegisterRequestDto;
+import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,21 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> register(@RequestBody RegisterRequestDto request){
-        User savedUser = userService.register(request.user(),request.roleId(),request.store());
+        User user = new User();
+        user.setName(request.name());
+        user.setEmail(request.email());
+        user.setPassword(request.password());
+
+        Store store = null;
+
+        if (request.store() != null){
+            store = new Store();
+            store.setName(request.store().name());
+            store.setPhone(request.store().phone());
+            store.setTaxNo(request.store().taxNo());
+            store.setBankAccount(request.store().bankAccount());
+        }
+        User savedUser = userService.register(user,request.roleId(),store);
 
         if (savedUser == null){
             return ResponseEntity.badRequest().build();

@@ -1,5 +1,7 @@
 package com.workintech.bandage.controller;
 
+import com.workintech.bandage.dto.ProductImageDto;
+import com.workintech.bandage.entity.Product;
 import com.workintech.bandage.entity.ProductImage;
 import com.workintech.bandage.service.ProductImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +15,62 @@ public class ProductImageController {
     private ProductImageService productImageService;
 
     @Autowired
-    public ProductImageController(ProductImageService productImageService){
+    public ProductImageController(ProductImageService productImageService) {
         this.productImageService = productImageService;
     }
+
     @GetMapping("/product/{productId}")
-    public List<ProductImage> getImagesByProductId(@PathVariable long productId){
-        return productImageService.getImagesByProductId(productId);
+    public List<ProductImageDto> getImagesByProductId(@PathVariable long productId) {
+        return productImageService.getImagesByProductId(productId).stream().map(this::toDto).toList();
     }
+
     @GetMapping("/{id}")
-    public  ProductImage getImageById(@PathVariable long id){
-        return productImageService.getImageById(id);
+    public ProductImageDto getImageById(@PathVariable long id) {
+        ProductImage productImage = productImageService.getImageById(id);
+
+        return toDto(productImage);
     }
+
     @PostMapping
-    public ProductImage save(@RequestBody ProductImage productImage){
-        return productImageService.save(productImage);
+    public ProductImageDto save(@RequestBody ProductImageDto request) {
+        ProductImage productImage = toEntity(request);
+
+        ProductImage savedImage = productImageService.save(productImage);
+
+        return toDto(savedImage);
     }
+
     @PutMapping("/{id}")
-    public ProductImage updateProductImage(@PathVariable long id,@RequestBody ProductImage productImage){
-        return productImageService.updateProductImage(id, productImage);
+    public ProductImageDto updateProductImage(@PathVariable long id, @RequestBody ProductImageDto request) {
+        ProductImage productImage = toEntity(request);
+
+        ProductImage updatedImage = productImageService.updateProductImage(id,productImage);
+
+        return toDto(updatedImage);
     }
+
     @DeleteMapping("/{id}")
-    public void deleteProductImage(@PathVariable long id){
+    public void deleteProductImage(@PathVariable long id) {
         productImageService.deleteProductImage(id);
+    }
+    private ProductImageDto toDto(ProductImage productImage){
+        if (productImage == null){
+            return null;
+        }
+        return new ProductImageDto(productImage.getId(),productImage.getUrl(),productImage.getImageIndex(),productImage.getProduct().getId());
+    }
+    private ProductImage toEntity(ProductImageDto request){
+        ProductImage productImage = new ProductImage();
+
+        productImage.setUrl(request.url());
+        productImage.setImageIndex(request.imageIndex());
+
+        if (request.productId() != null){
+            Product product = new Product();
+
+            product.setId(request.productId());
+            productImage.setProduct(product);
+        }
+        return productImage;
     }
 }
