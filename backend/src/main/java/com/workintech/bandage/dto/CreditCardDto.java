@@ -1,4 +1,10 @@
 package com.workintech.bandage.dto;
 
-public record CreditCardDto(Long id,Long userId, String nameOnCard, String lastFour, short expireMonth, short expireYear) {
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+public record CreditCardDto(Long id, Long userId, @NotBlank String nameOnCard,
+                 @NotBlank @Pattern(regexp = "\\d{4}") String lastFour, @Min(1) @Max(12) short expireMonth, short expireYear) {
 }

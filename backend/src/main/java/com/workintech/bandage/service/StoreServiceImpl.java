@@ -1,8 +1,10 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.Store;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,16 +25,17 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store getStoreById(long id) {
-        return storeRepository.findById(id).orElse(null);
+        return storeRepository.findById(id).orElseThrow(() -> new BandageException("Store not found: " +
+                id, HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Store save(Store store) {
         if (store == null || store.getId() != null){
-            return null;
+            throw new BandageException("Invalid store data",HttpStatus.BAD_REQUEST);
         }
         if (store.getUser() == null || store.getUser().getId() == null){
-            return null;
+            throw new BandageException("Store user is required.",HttpStatus.BAD_REQUEST);
         }
         return storeRepository.save(store);
     }
@@ -41,8 +44,8 @@ public class StoreServiceImpl implements StoreService {
     public Store updateStore(long id, Store store) {
         Store existingStore = getStoreById(id);
 
-        if (existingStore == null || store == null){
-            return null;
+        if (store == null){
+            throw new BandageException("Store cannot be null.",HttpStatus.BAD_REQUEST);
         }
         existingStore.setName(store.getName());
         existingStore.setBankAccount(store.getBankAccount());
@@ -55,10 +58,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void deleteStore(long id) {
         Store store = getStoreById(id);
-
-        if (store != null){
-            storeRepository.delete(store);
-        }
+        storeRepository.delete(store);
 
     }
 }

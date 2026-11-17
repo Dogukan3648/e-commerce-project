@@ -4,6 +4,7 @@ import com.workintech.bandage.dto.ProductImageDto;
 import com.workintech.bandage.entity.Product;
 import com.workintech.bandage.entity.ProductImage;
 import com.workintech.bandage.service.ProductImageService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class ProductImageController {
     }
 
     @PostMapping
-    public ProductImageDto save(@RequestBody ProductImageDto request) {
+    public ProductImageDto save(@Valid @RequestBody ProductImageDto request) {
         ProductImage productImage = toEntity(request);
 
         ProductImage savedImage = productImageService.save(productImage);
@@ -41,7 +42,7 @@ public class ProductImageController {
     }
 
     @PutMapping("/{id}")
-    public ProductImageDto updateProductImage(@PathVariable long id, @RequestBody ProductImageDto request) {
+    public ProductImageDto updateProductImage(@PathVariable long id,@Valid @RequestBody ProductImageDto request) {
         ProductImage productImage = toEntity(request);
 
         ProductImage updatedImage = productImageService.updateProductImage(id,productImage);

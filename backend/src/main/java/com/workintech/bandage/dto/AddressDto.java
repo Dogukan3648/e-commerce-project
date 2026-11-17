@@ -1,5 +1,7 @@
 package com.workintech.bandage.dto;
 
-public record AddressDto(Long id,Long userId, String title,String name,
-                         String surname,String phone,String city,String district,String neighborhood,String address) {
+import jakarta.validation.constraints.NotBlank;
+
+public record AddressDto(Long id, Long userId, @NotBlank String title, String name,
+                         String surname, String phone,@NotBlank String city,@NotBlank String district, String neighborhood,@NotBlank String address) {
 }

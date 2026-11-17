@@ -1,12 +1,14 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.Product;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,12 +33,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product getProductById(long productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-
-        if (optionalProduct.isPresent()){
-            return optionalProduct.get();
-        }
-        return null;
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new BandageException(
+                        "Product not found: " + productId,
+                        HttpStatus.NOT_FOUND
+                ));
     }
 
 
@@ -105,7 +106,7 @@ public class ProductServiceImpl implements ProductService{
         }
 
         if (limit <= 0 || offset < 0 || offset % limit != 0) {
-            return Page.empty();
+            throw new IllegalArgumentException("Invalid pagination parameters");
         }
 
 
@@ -120,8 +121,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product save(Product product) {
-        if (product == null || product.getId() != null){
-            return null;
+        if (product == null || product.getId() != null) {
+            throw new BandageException(
+                    "Invalid product data",
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         return productRepository.save(product);
@@ -131,9 +135,13 @@ public class ProductServiceImpl implements ProductService{
     public Product updateProduct(long id, Product product) {
         Product existingProduct = getProductById(id);
 
-        if (existingProduct == null || product == null){
-            return null;
+        if (product == null) {
+            throw new BandageException(
+                    "Product cannot be null",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
         existingProduct.setCategory(product.getCategory());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setName(product.getName());
@@ -149,11 +157,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void deleteProduct(long id) {
         Product product = getProductById(id);
-
-        if (product != null){
-            productRepository.delete(product);
-        }
-
+        productRepository.delete(product);
     }
 
 }

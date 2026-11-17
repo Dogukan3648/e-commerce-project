@@ -1,11 +1,15 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.Order;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -20,17 +24,24 @@ public class OrderServiceImpl implements OrderService{
     public List<Order> getOrdersByUserId(long userId) {
         return orderRepository.findByUserId(userId);
     }
-
     @Override
     public Order getOrderById(long id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new BandageException(
+                        "Order not found: " + id,
+                        HttpStatus.NOT_FOUND
+                ));
     }
 
     @Override
     public Order save(Order order) {
-        if (order == null || order.getId() != null){
-            return null;
+        if (order == null || order.getId() != null) {
+            throw new BandageException(
+                    "Invalid order data",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
         return orderRepository.save(order);
     }
 
@@ -38,10 +49,22 @@ public class OrderServiceImpl implements OrderService{
     public Order updateOrderStatus(long id, String status) {
         Order existingOrder = getOrderById(id);
 
-        if (existingOrder == null || status == null || status.isBlank()){
-            return null;
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Order status cannot be empty");
         }
-        existingOrder.setStatus(status);
+
+        String normalizedStatus = status.trim().toUpperCase(Locale.ROOT);
+
+        Set<String> validStatuses = Set.of(
+                "PENDING", "PROCESSING", "SHIPPED",
+                "DELIVERED", "CANCELLED"
+        );
+
+        if (!validStatuses.contains(normalizedStatus)) {
+            throw new IllegalArgumentException("Invalid order status");
+        }
+
+        existingOrder.setStatus(normalizedStatus);
 
         return orderRepository.save(existingOrder);
     }

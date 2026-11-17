@@ -4,6 +4,7 @@ import com.workintech.bandage.dto.CreditCardDto;
 import com.workintech.bandage.entity.CreditCard;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.CreditCardService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class CreditCardController {
     }
 
     @PostMapping
-    public CreditCardDto save(@RequestBody CreditCardDto request) {
+    public CreditCardDto save(@Valid @RequestBody CreditCardDto request) {
         CreditCard creditCard = toEntity(request);
 
         CreditCard savedCard = creditCardService.save(creditCard);
@@ -41,7 +42,7 @@ public class CreditCardController {
     }
 
     @PutMapping("/{id}/user/{userId}")
-    public CreditCardDto updateCreditCard(@PathVariable long id, @PathVariable long userId, @RequestBody CreditCardDto request) {
+    public CreditCardDto updateCreditCard(@PathVariable long id, @PathVariable long userId,@Valid @RequestBody CreditCardDto request) {
         CreditCard creditCard = toEntity(request);
 
         CreditCard updateCard = creditCardService.updateCreditCard(id,userId,creditCard);

@@ -3,6 +3,7 @@ package com.workintech.bandage.controller;
 import com.workintech.bandage.dto.UserResponseDto;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +31,15 @@ public class UserController {
     public UserResponseDto getUserById(@PathVariable long id) {
         User user = userService.getUserById(id);
 
-        return user == null ? null : toDto(user);
+        return toDto(user);
     }
 
 
     @PutMapping("/{id}")
-    public UserResponseDto updateUser(@PathVariable long id, @RequestBody User user) {
+    public UserResponseDto updateUser(@PathVariable long id,@Valid @RequestBody User user) {
         User updatedUser = userService.updateUser(id, user);
 
-        return updatedUser == null ? null : toDto(updatedUser);
+        return toDto(updatedUser);
     }
 
     @DeleteMapping("/{id}")

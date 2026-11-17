@@ -1,6 +1,7 @@
 package com.workintech.bandage.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,7 +16,9 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
     private String code;
+    @NotBlank
     private String title;
     private String img;
     private BigDecimal rating;

@@ -5,6 +5,7 @@ import com.workintech.bandage.entity.Order;
 import com.workintech.bandage.entity.OrderItem;
 import com.workintech.bandage.entity.Product;
 import com.workintech.bandage.service.OrderItemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public OrderItemDto save(@RequestBody OrderItemDto request) {
+    public OrderItemDto save(@Valid @RequestBody OrderItemDto request) {
         OrderItem orderItem = toEntity(request);
 
         OrderItem savedOrderItem = orderItemService.save(orderItem);

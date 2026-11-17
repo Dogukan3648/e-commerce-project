@@ -5,6 +5,7 @@ import com.workintech.bandage.entity.Category;
 import com.workintech.bandage.entity.Product;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductDto save(@RequestBody ProductDto request) {
+    public ProductDto save(@Valid @RequestBody ProductDto request) {
         Product product = toEntity(request);
 
         Product savedProduct = productService.save(product);
@@ -61,7 +62,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ProductDto updateProduct(@PathVariable long id, @RequestBody ProductDto request) {
+    public ProductDto updateProduct(@PathVariable long id,@Valid @RequestBody ProductDto request) {
         Product product = toEntity(request);
 
         Product updatedProduct = productService.updateProduct(id,product);

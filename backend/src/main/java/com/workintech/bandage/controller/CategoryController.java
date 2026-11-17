@@ -3,6 +3,7 @@ package com.workintech.bandage.controller;
 
 import com.workintech.bandage.entity.Category;
 import com.workintech.bandage.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,11 +28,11 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
     @PostMapping
-    public Category save(@RequestBody Category category){
+    public Category save(@Valid @RequestBody Category category){
         return categoryService.save(category);
     }
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable long id,@RequestBody Category category){
+    public Category updateCategory(@PathVariable long id,@Valid @RequestBody Category category){
         return categoryService.updateCategory(id, category);
     }
     @DeleteMapping("/{id}")

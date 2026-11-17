@@ -1,4 +1,7 @@
 package com.workintech.bandage.dto;
 
-public record ProductImageDto(Long id,String url,int imageIndex,Long productId) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record ProductImageDto(Long id, @NotBlank String url, int imageIndex,@NotNull Long productId) {
 }

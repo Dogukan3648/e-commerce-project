@@ -4,6 +4,7 @@ import com.workintech.bandage.dto.RegisterRequestDto;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequestDto request){
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDto request){
         User user = new User();
         user.setName(request.name());
         user.setEmail(request.email());
@@ -36,11 +37,7 @@ public class AuthController {
             store.setTaxNo(request.store().taxNo());
             store.setBankAccount(request.store().bankAccount());
         }
-        User savedUser = userService.register(user,request.roleId(),store);
-
-        if (savedUser == null){
-            return ResponseEntity.badRequest().build();
-        }
+        userService.register(user,request.roleId(),store);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

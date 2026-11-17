@@ -5,6 +5,7 @@ import com.workintech.bandage.dto.StoreResponseDto;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.StoreService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class StoreController {
     }
 
     @PostMapping
-    public StoreResponseDto save(@RequestBody StoreRequestDto request) {
+    public StoreResponseDto save(@Valid @RequestBody StoreRequestDto request) {
         Store store = toEntity(request);
 
         Store savedStore = storeService.save(store);
@@ -42,7 +43,7 @@ public class StoreController {
     }
 
     @PutMapping("/{id}")
-    public StoreResponseDto updateStore(@PathVariable long id, @RequestBody StoreRequestDto request) {
+    public StoreResponseDto updateStore(@PathVariable long id, @Valid @RequestBody StoreRequestDto request) {
         Store store = toEntity(request);
 
         Store updateStore = storeService.updateStore(id,store);

@@ -4,6 +4,7 @@ import com.workintech.bandage.dto.AddressDto;
 import com.workintech.bandage.entity.Address;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.AddressService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class AddressController {
     }
 
     @PostMapping
-    public AddressDto save(@RequestBody AddressDto request) {
+    public AddressDto save(@Valid @RequestBody AddressDto request) {
         Address address = toEntity(request);
 
         Address savedAddress = addressService.save(address);
@@ -41,7 +42,7 @@ public class AddressController {
     }
 
     @PutMapping("/{id}/user/{userId}")
-    public AddressDto updateAddress(@PathVariable long id, @PathVariable long userId, @RequestBody AddressDto request) {
+    public AddressDto updateAddress(@PathVariable long id, @PathVariable long userId,@Valid @RequestBody AddressDto request) {
         Address address = toEntity(request);
 
         Address updatedAddress = addressService.updateAddress(id,userId,address);

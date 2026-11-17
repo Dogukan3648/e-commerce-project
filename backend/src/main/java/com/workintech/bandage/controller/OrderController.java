@@ -6,6 +6,7 @@ import com.workintech.bandage.entity.Address;
 import com.workintech.bandage.entity.Order;
 import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDto save(@RequestBody OrderDto request) {
+    public OrderDto save(@Valid @RequestBody OrderDto request) {
         Order order = toEntity(request);
 
         Order savedOrder = orderService.save(order);
@@ -43,7 +44,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/status")
-    public OrderDto updateOrderStatus(@PathVariable long id, @RequestParam String status) {
+    public OrderDto updateOrderStatus(@PathVariable long id,@RequestParam String status) {
         Order updatedOrder = orderService.updateOrderStatus(id,status);
 
         return toDto(updatedOrder);

@@ -1,8 +1,10 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.ProductImage;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.ProductImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,17 +23,21 @@ public class ProductImageServiceImpl implements ProductImageService {
     public List<ProductImage> getImagesByProductId(long productId) {
         return productImageRepository.findByProductIdOrderByImageIndexAsc(productId);
     }
-
     @Override
     public ProductImage getImageById(long id) {
-        return productImageRepository.findById(id).orElse(null);
+        return productImageRepository.findById(id)
+                .orElseThrow(() -> new BandageException(
+                        "Product image not found: " + id,
+                        HttpStatus.NOT_FOUND
+                ));
     }
-
     @Override
     public ProductImage save(ProductImage productImage) {
-
-        if (productImage == null || productImage.getId() != null){
-            return null;
+        if (productImage == null || productImage.getId() != null) {
+            throw new BandageException(
+                    "Invalid product image data",
+                    HttpStatus.BAD_REQUEST
+            );
         }
 
         return productImageRepository.save(productImage);
@@ -41,9 +47,13 @@ public class ProductImageServiceImpl implements ProductImageService {
     public ProductImage updateProductImage(long id, ProductImage productImage) {
         ProductImage existingProductImage = getImageById(id);
 
-        if (existingProductImage == null || productImage == null){
-            return null;
+        if (productImage == null) {
+            throw new BandageException(
+                    "Product image cannot be null",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
         existingProductImage.setImageIndex(productImage.getImageIndex());
         existingProductImage.setProduct(productImage.getProduct());
         existingProductImage.setUrl(productImage.getUrl());
@@ -54,10 +64,6 @@ public class ProductImageServiceImpl implements ProductImageService {
     @Override
     public void deleteProductImage(long id) {
         ProductImage productImage = getImageById(id);
-
-        if (productImage != null){
-            productImageRepository.delete(productImage);
-        }
-
+        productImageRepository.delete(productImage);
     }
 }

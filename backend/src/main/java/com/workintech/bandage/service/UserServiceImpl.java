@@ -3,9 +3,11 @@ package com.workintech.bandage.service;
 import com.workintech.bandage.entity.Role;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.RoleRepository;
 import com.workintech.bandage.repository.StoreRepository;
 import com.workintech.bandage.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,35 +30,35 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User register(User user, long roleId, Store store) {
         if (user == null || user.getId() != null) {
-            return null;
+            throw new BandageException("Invalid user data", HttpStatus.BAD_REQUEST);
         }
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return null;
+            throw new BandageException("Email already exists", HttpStatus.CONFLICT);
         }
 
-        Role role = roleRepository.findById(roleId).orElse(null);
-
-        if (role == null) {
-            return null;
-        }
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new BandageException(
+                        "Role not found: " + roleId,
+                        HttpStatus.NOT_FOUND
+                ));
 
         String roleCode = role.getCode();
 
         if (!"customer".equals(roleCode) && !"store".equals(roleCode)) {
-            return null;
+            throw new BandageException("Invalid role", HttpStatus.BAD_REQUEST);
         }
 
         if ("store".equals(roleCode) && store == null) {
-            return null;
+            throw new BandageException("Store information is required", HttpStatus.BAD_REQUEST);
         }
 
         if ("customer".equals(roleCode) && store != null) {
-            return null;
+            throw new BandageException("Customer cannot have store information", HttpStatus.BAD_REQUEST);
         }
 
         if (store != null && store.getId() != null) {
-            return null;
+            throw new BandageException("Invalid store data", HttpStatus.BAD_REQUEST);
         }
 
         user.setRole(role);
@@ -74,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id).orElseThrow(() -> new BandageException("User not found " + id, HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -87,14 +89,14 @@ public class UserServiceImpl implements UserService {
     public User updateUser(long id, User user) {
         User existingUser = getUserById(id);
 
-        if (existingUser == null || user == null) {
-            return null;
+        if (user == null) {
+            throw new BandageException("User cannot be null", HttpStatus.BAD_REQUEST);
         }
 
         if (user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())) {
 
             if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-                return null;
+                throw new BandageException("Email already exists", HttpStatus.CONFLICT);
             }
 
             existingUser.setEmail(user.getEmail());
@@ -112,9 +114,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(long id) {
         User user = getUserById(id);
-
-        if (user != null) {
-            userRepository.delete(user);
-        }
+        userRepository.delete(user);
     }
 }
