@@ -8,6 +8,7 @@ import com.workintech.bandage.repository.RoleRepository;
 import com.workintech.bandage.repository.StoreRepository;
 import com.workintech.bandage.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +20,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final StoreRepository storeRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.storeRepository = storeRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -63,6 +66,8 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(role);
         user.setEmailVerified(false);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User savedUser = userRepository.save(user);
 
