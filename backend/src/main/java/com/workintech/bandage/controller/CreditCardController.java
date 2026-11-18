@@ -55,9 +55,7 @@ public class CreditCardController {
         creditCardService.deleteCreditCard(id, userId);
     }
     private CreditCardDto toDto(CreditCard creditCard){
-        if (creditCard == null){
-            return null;
-        }
+
         return new CreditCardDto(creditCard.getId(),creditCard.getUser().getId(),creditCard.getNameOnCard(),
                 creditCard.getLastFour(),creditCard.getExpireMonth(),creditCard.getExpireYear());
     }

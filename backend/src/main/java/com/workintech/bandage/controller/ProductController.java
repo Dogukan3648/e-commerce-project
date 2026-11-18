@@ -75,9 +75,6 @@ public class ProductController {
         productService.deleteProduct(id);
     }
     private ProductDto toDto(Product product){
-        if (product == null){
-            return null;
-        }
         return new ProductDto(
                 product.getId(),
                 product.getName(),

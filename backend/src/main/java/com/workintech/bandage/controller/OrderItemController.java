@@ -42,9 +42,6 @@ public class OrderItemController {
         return toDto(savedOrderItem);
     }
     private OrderItemDto toDto(OrderItem orderItem) {
-        if (orderItem == null) {
-            return null;
-        }
 
         return new OrderItemDto(
                 orderItem.getId(),

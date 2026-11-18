@@ -56,9 +56,7 @@ public class AddressController {
     }
 
     private AddressDto toDto(Address address){
-        if (address == null){
-            return null;
-        }
+
         return new AddressDto(address.getId(),address.getUser().getId(),address.getTitle(),address.getName(),
                 address.getSurname(),address.getPhone(),address.getCity(),address.getDistrict(),address.getNeighborhood(),
                 address.getAddress());

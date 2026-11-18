@@ -50,9 +50,6 @@ public class OrderController {
         return toDto(updatedOrder);
     }
     private OrderDto toDto(Order order) {
-        if (order == null) {
-            return null;
-        }
 
         return new OrderDto(
                 order.getId(),

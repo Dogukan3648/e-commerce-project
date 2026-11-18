@@ -57,9 +57,7 @@ public class StoreController {
     }
 
     private StoreResponseDto toDto(Store store){
-        if (store == null){
-            return null;
-        }
+
         return new StoreResponseDto(store.getId(),store.getUser().getId(),store.getName(),store.getPhone());
 
     }

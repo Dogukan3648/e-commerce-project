@@ -54,10 +54,9 @@ public class ProductImageController {
     public void deleteProductImage(@PathVariable long id) {
         productImageService.deleteProductImage(id);
     }
+
     private ProductImageDto toDto(ProductImage productImage){
-        if (productImage == null){
-            return null;
-        }
+
         return new ProductImageDto(productImage.getId(),productImage.getUrl(),productImage.getImageIndex(),productImage.getProduct().getId());
     }
     private ProductImage toEntity(ProductImageDto request){
