@@ -1,10 +1,12 @@
+
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.CreditCard;
 import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.CreditCardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,25 +14,29 @@ import java.util.List;
 @Service
 public class CreditCardServiceImpl implements CreditCardService {
 
-    private CreditCardRepository creditCardRepository;
+    private final CreditCardRepository creditCardRepository;
 
-    @Autowired
-    public CreditCardServiceImpl(CreditCardRepository creditCardRepository){
+    public CreditCardServiceImpl(CreditCardRepository creditCardRepository) {
         this.creditCardRepository = creditCardRepository;
     }
 
     @Override
     public List<CreditCard> getCardsByUserId(long userId) {
+        checkOwnership(userId);
         return creditCardRepository.findByUserId(userId);
     }
 
     @Override
     public CreditCard getCardById(long id) {
-        return creditCardRepository.findById(id)
+        CreditCard creditCard = creditCardRepository.findById(id)
                 .orElseThrow(() -> new BandageException(
                         "Credit card not found: " + id,
                         HttpStatus.NOT_FOUND
                 ));
+
+        checkOwnership(creditCard.getUser().getId());
+
+        return creditCard;
     }
 
     @Override
@@ -41,6 +47,16 @@ public class CreditCardServiceImpl implements CreditCardService {
                     HttpStatus.BAD_REQUEST
             );
         }
+
+        if (creditCard.getUser() == null ||
+                creditCard.getUser().getId() == null) {
+            throw new BandageException(
+                    "Credit card user is required",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        checkOwnership(creditCard.getUser().getId());
 
         return creditCardRepository.save(creditCard);
     }
@@ -83,5 +99,28 @@ public class CreditCardServiceImpl implements CreditCardService {
         }
 
         creditCardRepository.delete(creditCard);
+    }
+
+    private void checkOwnership(Long userId) {
+        var authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new BandageException(
+                    "Authentication required",
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+
+        Number authenticatedUserId =
+                jwtAuth.getToken().getClaim("userId");
+
+        if (authenticatedUserId == null || userId == null
+                || authenticatedUserId.longValue() != userId.longValue()) {
+            throw new BandageException(
+                    "You cannot access this credit card",
+                    HttpStatus.FORBIDDEN
+            );
+        }
     }
 }

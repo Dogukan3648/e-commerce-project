@@ -1,5 +1,7 @@
 package com.workintech.bandage.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -8,13 +10,13 @@ public record RegisterRequestDto(
         @NotBlank String name,
         @NotBlank @Email String email,
         @NotBlank String password,
-        @Positive long roleId,
-        StoreInfo store
+        @JsonProperty("role_id") @Positive long roleId,
+        @Valid StoreInfo store
 ) {
     public record StoreInfo(
-            String name,
+            @NotBlank String name,
             String phone,
-            String taxNo,
-            String bankAccount
+           @JsonProperty("tax_no") String taxNo,
+           @JsonProperty("bank_account") String bankAccount
     ) {}
 }
