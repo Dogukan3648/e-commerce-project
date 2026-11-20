@@ -2,17 +2,9 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.dto.OrderCreateRequestDto;
-import com.workintech.bandage.entity.Address;
-import com.workintech.bandage.entity.Order;
-import com.workintech.bandage.entity.OrderItem;
-import com.workintech.bandage.entity.Product;
-import com.workintech.bandage.entity.User;
+import com.workintech.bandage.entity.*;
 import com.workintech.bandage.exception.BandageException;
-import com.workintech.bandage.repository.AddressRepository;
-import com.workintech.bandage.repository.OrderItemRepository;
-import com.workintech.bandage.repository.OrderRepository;
-import com.workintech.bandage.repository.ProductRepository;
-import com.workintech.bandage.repository.UserRepository;
+import com.workintech.bandage.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -32,6 +22,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemRepository orderItemRepository;
     private UserRepository userRepository;
     private AddressRepository addressRepository;
+    private CreditCardRepository creditCardRepository;
 
     @Autowired
     public OrderServiceImpl(
@@ -39,12 +30,14 @@ public class OrderServiceImpl implements OrderService {
             ProductRepository productRepository,
             OrderItemRepository orderItemRepository,
             UserRepository userRepository,
-            AddressRepository addressRepository) {
+            AddressRepository addressRepository,
+            CreditCardRepository creditCardRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.creditCardRepository = creditCardRepository;
     }
 
     @Override
@@ -67,24 +60,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order save(Order order) {
-        if (order == null || order.getId() != null
-                || order.getUser() == null
-                || order.getUser().getId() == null) {
-            throw new BandageException(
-                    "Invalid order data",
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        checkOwnership(order.getUser().getId());
-        order.setStatus("PENDING");
-
-        return orderRepository.save(order);
-    }
-
     @Transactional
-    public Order createOrder(OrderCreateRequestDto request) {
+    public Order save(OrderCreateRequestDto request) {
         if (request == null || request.userId() == null
                 || request.items() == null || request.items().isEmpty()) {
             throw new BandageException(
@@ -104,26 +81,67 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setUser(user);
 
-        if (request.addressId() != null) {
-            Address address = addressRepository.findById(request.addressId())
+        Address address = addressRepository.findById(request.addressId()).orElseThrow(() -> new BandageException(
+                "Address not found",HttpStatus.NOT_FOUND
+        ));
+        if (!address.getUser().getId().equals(request.userId())){
+            throw new BandageException("You cannot use this address",HttpStatus.FORBIDDEN);
+        }
+        order.setAddress(address);
+
+        Map<String, Object> shippingSnapshot = new HashMap<>();
+
+        shippingSnapshot.put("title", address.getTitle());
+        shippingSnapshot.put("name", address.getName());
+        shippingSnapshot.put("surname", address.getSurname());
+        shippingSnapshot.put("phone", address.getPhone());
+        shippingSnapshot.put("city", address.getCity());
+        shippingSnapshot.put("district", address.getDistrict());
+        shippingSnapshot.put("neighborhood", address.getNeighborhood());
+        shippingSnapshot.put("address", address.getAddress());
+
+        order.setShippingAddressSnapshot(shippingSnapshot);
+        Map<String, Object> billingSnapshot = new HashMap<>(shippingSnapshot);
+
+        if (request.billingAddressId() != null) {
+            Address billingAddress = addressRepository.findById(request.billingAddressId())
                     .orElseThrow(() -> new BandageException(
-                            "Address not found",
+                            "Billing address not found",
                             HttpStatus.NOT_FOUND
                     ));
 
-            if (!address.getUser().getId().equals(request.userId())) {
+            if (!billingAddress.getUser().getId().equals(request.userId())) {
                 throw new BandageException(
-                        "You cannot use this address",
+                        "You cannot use this billing address",
                         HttpStatus.FORBIDDEN
                 );
             }
 
-            order.setAddress(address);
+            billingSnapshot.put("title", billingAddress.getTitle());
+            billingSnapshot.put("name", billingAddress.getName());
+            billingSnapshot.put("surname", billingAddress.getSurname());
+            billingSnapshot.put("phone", billingAddress.getPhone());
+            billingSnapshot.put("city", billingAddress.getCity());
+            billingSnapshot.put("district", billingAddress.getDistrict());
+            billingSnapshot.put("neighborhood", billingAddress.getNeighborhood());
+            billingSnapshot.put("address", billingAddress.getAddress());
         }
 
-        order.setShippingAddressSnapshot(request.shippingAddressSnapshot());
-        order.setBillingAddressSnapshot(request.billingAddressSnapshot());
-        order.setCardLastFour(request.cardLastFour());
+        order.setBillingAddressSnapshot(billingSnapshot);
+        CreditCard creditCard = creditCardRepository.findById(request.creditCardId())
+                .orElseThrow(() -> new BandageException(
+                        "Credit card not found",
+                        HttpStatus.NOT_FOUND
+                ));
+
+        if (!creditCard.getUser().getId().equals(request.userId())) {
+            throw new BandageException(
+                    "You cannot use this credit card",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+        order.setCardLastFour(creditCard.getLastFour());
         order.setStatus("PENDING");
 
         BigDecimal subtotal = calculateSubtotal(request);
@@ -190,6 +208,12 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(existingOrder);
     }
 
+    @Override
+    public List<OrderItem> getOrderItemsByOrderId(long orderId) {
+        getOrderById(orderId);
+        return orderItemRepository.findByOrderId(orderId);
+    }
+
     private void checkOwnership(Long userId) {
         var authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
@@ -216,7 +240,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subtotal = BigDecimal.ZERO;
 
         for (OrderCreateRequestDto.Item item : request.items()) {
-            Product product = productRepository.findById(item.productId())
+            Product product = productRepository.findByIdForUpdate(item.productId())
                     .orElseThrow(() -> new BandageException(
                             "Product not found: " + item.productId(),
                             HttpStatus.NOT_FOUND

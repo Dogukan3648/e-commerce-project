@@ -7,14 +7,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
-import java.util.Map;
+
 
 public record OrderCreateRequestDto(
         @NotNull Long userId,
-        Long addressId,
-        Map<String, Object> shippingAddressSnapshot,
-        Map<String, Object> billingAddressSnapshot,
-        String cardLastFour,
+        @NotNull Long addressId,
+        Long billingAddressId,
+        @NotNull Long creditCardId,
         @NotEmpty List<@Valid Item> items
 ) {
     public record Item(

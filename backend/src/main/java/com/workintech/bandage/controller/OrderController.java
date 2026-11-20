@@ -1,10 +1,11 @@
 package com.workintech.bandage.controller;
 
 
+import com.workintech.bandage.dto.OrderCreateRequestDto;
+import com.workintech.bandage.dto.OrderDetailDto;
 import com.workintech.bandage.dto.OrderDto;
-import com.workintech.bandage.entity.Address;
+import com.workintech.bandage.dto.OrderItemDto;
 import com.workintech.bandage.entity.Order;
-import com.workintech.bandage.entity.User;
 import com.workintech.bandage.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +29,29 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderDto getOrderById(@PathVariable long id) {
+    public OrderDetailDto getOrderById(@PathVariable long id) {
         Order order = orderService.getOrderById(id);
 
-        return toDto(order);
+        List<OrderItemDto> items = orderService.getOrderItemsByOrderId(id)
+                .stream()
+                .map(item -> new OrderItemDto(
+                        item.getId(),
+                        id,
+                        item.getProduct().getId(),
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getProductName(),
+                        item.getDetail()
+                ))
+                .toList();
+
+        return new OrderDetailDto(toDto(order), items);
     }
 
     @PostMapping
-    public OrderDto save(@Valid @RequestBody OrderDto request) {
-        Order order = toEntity(request);
+    public OrderDto save(@Valid @RequestBody OrderCreateRequestDto request) {
 
-        Order savedOrder = orderService.save(order);
+        Order savedOrder = orderService.save(request);
 
         return toDto(savedOrder);
     }
@@ -66,31 +79,5 @@ public class OrderController {
                 order.getShipping(),
                 order.getTotal()
         );
-    }
-    private Order toEntity(OrderDto request) {
-        Order order = new Order();
-
-        order.setShippingAddressSnapshot(request.shippingAddressSnapshot());
-        order.setBillingAddressSnapshot(request.billingAddressSnapshot());
-        order.setCardLastFour(request.cardLastFour());
-
-        order.setSubtotal(request.subtotal());
-        order.setDiscount(request.discount());
-        order.setShipping(request.shipping());
-        order.setTotal(request.total());
-
-        if (request.userId() != null) {
-            User user = new User();
-            user.setId(request.userId());
-            order.setUser(user);
-        }
-
-        if (request.addressId() != null) {
-            Address address = new Address();
-            address.setId(request.addressId());
-            order.setAddress(address);
-        }
-
-        return order;
     }
 }

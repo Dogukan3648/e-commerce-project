@@ -29,6 +29,8 @@ public class SecurityConfig {
                                "/categories","/categories/**").permitAll()
                        .requestMatchers("/users","/users/**").denyAll()
 
+                       .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
+                       .requestMatchers(HttpMethod.POST, "/orders").authenticated()
                        .requestMatchers(
                                "/orders", "/orders/**",
                                "/order-items", "/order-items/**"
