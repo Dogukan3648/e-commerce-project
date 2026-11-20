@@ -3,6 +3,7 @@ package com.workintech.bandage.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,6 +39,14 @@ public class GlobalExceptionHandler {
         log.error("Validation error: {}",exception.getMessage());
 
         BandageErrorResponse response = new BandageErrorResponse("Invalid request data");
+
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<BandageErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception){
+        log.error("Invalid request body: {}",exception.getMessage());
+
+        BandageErrorResponse response = new BandageErrorResponse("Invalid or missing request body");
 
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }

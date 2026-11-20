@@ -33,6 +33,9 @@ public class SecurityConfig {
                                "/orders", "/orders/**",
                                "/order-items", "/order-items/**"
                        ).denyAll()
+                       .requestMatchers(HttpMethod.POST,"/categories","/categories/**").denyAll()
+                       .requestMatchers(HttpMethod.PUT,"/categories","/categories/**").denyAll()
+                       .requestMatchers(HttpMethod.DELETE,"/categories","/categories/**").denyAll()
 
 
 

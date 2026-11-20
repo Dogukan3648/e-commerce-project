@@ -1,14 +1,18 @@
 package com.workintech.bandage.service;
 
 import com.workintech.bandage.entity.Product;
+import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.ProductRepository;
+import com.workintech.bandage.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,10 +23,12 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService{
 
     private ProductRepository productRepository;
+    private StoreRepository storeRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository){
+    public ProductServiceImpl(ProductRepository productRepository,StoreRepository storeRepository){
         this.productRepository = productRepository;
+        this.storeRepository = storeRepository;
     }
 
 
@@ -127,6 +133,11 @@ public class ProductServiceImpl implements ProductService{
                     HttpStatus.BAD_REQUEST
             );
         }
+        Store store = checkStoreOwnership(product.getStore());
+        product.setStore(store);
+
+        product.setRating(BigDecimal.ZERO);
+        product.setSellCount(0);
 
         return productRepository.save(product);
     }
@@ -142,14 +153,15 @@ public class ProductServiceImpl implements ProductService{
             );
         }
 
+        checkStoreOwnership(existingProduct.getStore());
+        Store targetStore = checkStoreOwnership(product.getStore());
+
         existingProduct.setCategory(product.getCategory());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setName(product.getName());
         existingProduct.setPrice(product.getPrice());
-        existingProduct.setRating(product.getRating());
-        existingProduct.setSellCount(product.getSellCount());
         existingProduct.setStock(product.getStock());
-        existingProduct.setStore(product.getStore());
+        existingProduct.setStore(targetStore);
 
         return productRepository.save(existingProduct);
     }
@@ -157,7 +169,53 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void deleteProduct(long id) {
         Product product = getProductById(id);
+        checkStoreOwnership(product.getStore());
         productRepository.delete(product);
     }
+
+    private Store checkStoreOwnership(Store store) {
+        var authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new BandageException(
+                    "Authentication required",
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+
+        if (!"store".equals(jwtAuth.getToken().getClaimAsString("role"))) {
+            throw new BandageException(
+                    "Only store owners can manage products",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+        if (store == null || store.getId() == null) {
+            throw new BandageException(
+                    "Product store is required",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        Store existingStore = storeRepository.findById(store.getId())
+                .orElseThrow(() -> new BandageException(
+                        "Store not found: " + store.getId(),
+                        HttpStatus.NOT_FOUND
+                ));
+
+        Number userId = jwtAuth.getToken().getClaim("userId");
+
+        if (userId == null ||
+                !existingStore.getUser().getId().equals(userId.longValue())) {
+            throw new BandageException(
+                    "You cannot manage products of this store",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+        return existingStore;
+    }
+
 
 }

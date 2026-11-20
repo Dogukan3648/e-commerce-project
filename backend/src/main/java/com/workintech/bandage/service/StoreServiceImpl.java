@@ -5,6 +5,8 @@ import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,16 +39,27 @@ public class StoreServiceImpl implements StoreService {
         if (store.getUser() == null || store.getUser().getId() == null){
             throw new BandageException("Store user is required.",HttpStatus.BAD_REQUEST);
         }
+
+        checkStoreOwnership(store.getUser().getId());
+
+
         return storeRepository.save(store);
     }
+
 
     @Override
     public Store updateStore(long id, Store store) {
         Store existingStore = getStoreById(id);
 
-        if (store == null){
-            throw new BandageException("Store cannot be null.",HttpStatus.BAD_REQUEST);
+        if (store == null) {
+            throw new BandageException(
+                    "Store cannot be null.",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
+        checkStoreOwnership(existingStore.getUser().getId());
+
         existingStore.setName(store.getName());
         existingStore.setBankAccount(store.getBankAccount());
         existingStore.setPhone(store.getPhone());
@@ -55,10 +68,46 @@ public class StoreServiceImpl implements StoreService {
         return storeRepository.save(existingStore);
     }
 
+
     @Override
     public void deleteStore(long id) {
         Store store = getStoreById(id);
+
+        checkStoreOwnership(store.getUser().getId());
+
         storeRepository.delete(store);
 
     }
+
+    private void checkStoreOwnership(Long userId) {
+        var authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new BandageException(
+                    "Authentication required",
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+
+        Number authenticatedUserId = jwtAuth.getToken().getClaim("userId");
+        String role = jwtAuth.getToken().getClaimAsString("role");
+
+        if (!"store".equals(role)) {
+            throw new BandageException(
+                    "Only store owners can manage stores",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+        if (authenticatedUserId == null || userId == null
+                || authenticatedUserId.longValue() != userId.longValue()) {
+            throw new BandageException(
+                    "You cannot manage this store",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+    }
+
+
 }
