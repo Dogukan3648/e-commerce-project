@@ -23,7 +23,8 @@ public class SecurityConfig {
                .sessionManagement(session -> session
                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                .authorizeHttpRequests(auth -> auth
-                       .requestMatchers(HttpMethod.POST,"/signup","/login").permitAll()
+                       .requestMatchers(HttpMethod.POST,"/signup","/login","/resend-verification-email").permitAll()
+                       .requestMatchers(HttpMethod.GET,"/verify-email").permitAll()
                        .requestMatchers(HttpMethod.GET, "/roles","/roles/**").permitAll()
                        .requestMatchers(HttpMethod.GET,"/products","/products/**",
                                "/categories","/categories/**").permitAll()

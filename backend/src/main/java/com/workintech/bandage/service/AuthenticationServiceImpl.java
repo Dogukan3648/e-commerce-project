@@ -38,11 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                     HttpStatus.UNAUTHORIZED
             );
         }
+    User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new BandageException("Invalid email or password",HttpStatus.UNAUTHORIZED));
 
-        return userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new BandageException(
-                        "Invalid email or password",
-                        HttpStatus.UNAUTHORIZED
-                ));
+        if (!user.isEmailVerified()){
+            throw new BandageException("Please verify your email address",HttpStatus.FORBIDDEN);
+        }
+        return user;
     }
 }

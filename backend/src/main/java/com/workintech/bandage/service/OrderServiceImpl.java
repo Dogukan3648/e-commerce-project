@@ -59,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+
     @Override
     @Transactional
     public Order save(OrderCreateRequestDto request) {
@@ -68,6 +69,18 @@ public class OrderServiceImpl implements OrderService {
                     "Invalid order data",
                     HttpStatus.BAD_REQUEST
             );
+        }
+
+        Set<Long> productIds = new HashSet<>();
+
+        for (OrderCreateRequestDto.Item item : request.items()) {
+            if (item == null || item.productId() == null
+                    || !productIds.add(item.productId())) {
+                throw new BandageException(
+                        "Invalid or duplicate product in order",
+                        HttpStatus.BAD_REQUEST
+                );
+            }
         }
 
         checkOwnership(request.userId());
@@ -81,12 +94,19 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setUser(user);
 
-        Address address = addressRepository.findById(request.addressId()).orElseThrow(() -> new BandageException(
-                "Address not found",HttpStatus.NOT_FOUND
-        ));
-        if (!address.getUser().getId().equals(request.userId())){
-            throw new BandageException("You cannot use this address",HttpStatus.FORBIDDEN);
+        Address address = addressRepository.findById(request.addressId())
+                .orElseThrow(() -> new BandageException(
+                        "Address not found",
+                        HttpStatus.NOT_FOUND
+                ));
+
+        if (!address.getUser().getId().equals(request.userId())) {
+            throw new BandageException(
+                    "You cannot use this address",
+                    HttpStatus.FORBIDDEN
+            );
         }
+
         order.setAddress(address);
 
         Map<String, Object> shippingSnapshot = new HashMap<>();
@@ -101,6 +121,7 @@ public class OrderServiceImpl implements OrderService {
         shippingSnapshot.put("address", address.getAddress());
 
         order.setShippingAddressSnapshot(shippingSnapshot);
+
         Map<String, Object> billingSnapshot = new HashMap<>(shippingSnapshot);
 
         if (request.billingAddressId() != null) {
@@ -128,6 +149,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setBillingAddressSnapshot(billingSnapshot);
+
         CreditCard creditCard = creditCardRepository.findById(request.creditCardId())
                 .orElseThrow(() -> new BandageException(
                         "Credit card not found",
@@ -235,11 +257,15 @@ public class OrderServiceImpl implements OrderService {
             );
         }
     }
-
     private BigDecimal calculateSubtotal(OrderCreateRequestDto request) {
         BigDecimal subtotal = BigDecimal.ZERO;
 
-        for (OrderCreateRequestDto.Item item : request.items()) {
+        List<OrderCreateRequestDto.Item> sortedItems = request.items()
+                .stream()
+                .sorted(Comparator.comparing(OrderCreateRequestDto.Item::productId))
+                .toList();
+
+        for (OrderCreateRequestDto.Item item : sortedItems) {
             Product product = productRepository.findByIdForUpdate(item.productId())
                     .orElseThrow(() -> new BandageException(
                             "Product not found: " + item.productId(),

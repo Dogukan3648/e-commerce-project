@@ -3,9 +3,12 @@ package com.workintech.bandage.controller;
 import com.workintech.bandage.dto.LoginRequestDto;
 import com.workintech.bandage.dto.LoginResponseDto;
 import com.workintech.bandage.dto.RegisterRequestDto;
+import com.workintech.bandage.dto.ResendVerificationEmailRequestDto;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
+import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.service.AuthenticationService;
+import com.workintech.bandage.service.EmailVerificationTokenService;
 import com.workintech.bandage.service.TokenService;
 import com.workintech.bandage.service.UserService;
 import jakarta.validation.Valid;
@@ -14,23 +17,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AuthController {
     private UserService userService;
     private AuthenticationService authenticationService;
     private TokenService tokenService;
+    private EmailVerificationTokenService emailVerificationTokenService;
 
     @Autowired
-    public AuthController(UserService userService,AuthenticationService authenticationService,TokenService tokenService){
+    public AuthController(UserService userService,AuthenticationService authenticationService,TokenService tokenService,EmailVerificationTokenService emailVerificationTokenService){
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.tokenService = tokenService;
+        this.emailVerificationTokenService = emailVerificationTokenService;
     }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token){
+        emailVerificationTokenService.verifyEmail(token);
+
+        return ResponseEntity.ok("Email verified successfully");
+    }
+
 
     @PostMapping("/signup")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDto request){
@@ -68,6 +78,10 @@ public class AuthController {
 
         User user = userService.getUserById(userId);
 
+        if (!user.isEmailVerified()){
+            throw new BandageException("Please verify your email address",HttpStatus.FORBIDDEN);
+        }
+
         String token = tokenService.generateToken(user);
 
         return ResponseEntity.ok(new LoginResponseDto(
@@ -77,6 +91,12 @@ public class AuthController {
                 user.getEmail(),
                 user.isEmailVerified()
         ));
+    }
+    @PostMapping("/resend-verification-email")
+    public ResponseEntity<Void> resendVerificationEmail(@Valid @RequestBody ResendVerificationEmailRequestDto request){
+        userService.resendVerificationEmail(request.email());
+
+        return ResponseEntity.accepted().build();
     }
 
 

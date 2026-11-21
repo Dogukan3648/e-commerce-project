@@ -11,4 +11,5 @@ public interface UserService {
     List<User> getAllUsers();
     User updateUser(long id,User user);
     void deleteUser(long id);
+    void resendVerificationEmail(String email);
 }

@@ -1,17 +1,21 @@
 package com.workintech.bandage.service;
 
+import com.workintech.bandage.entity.EmailVerificationToken;
 import com.workintech.bandage.entity.Role;
 import com.workintech.bandage.entity.Store;
 import com.workintech.bandage.entity.User;
+import com.workintech.bandage.event.VerificationEmailRequestedEvent;
 import com.workintech.bandage.exception.BandageException;
 import com.workintech.bandage.repository.RoleRepository;
 import com.workintech.bandage.repository.StoreRepository;
 import com.workintech.bandage.repository.UserRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -21,12 +25,17 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final StoreRepository storeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationTokenService emailVerificationTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository,PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, StoreRepository storeRepository,
+    PasswordEncoder passwordEncoder,EmailVerificationTokenService emailVerificationTokenService,ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.storeRepository = storeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailVerificationTokenService = emailVerificationTokenService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -71,12 +80,18 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
 
+
         if ("store".equals(roleCode)) {
             store.setUser(savedUser);
             storeRepository.save(store);
         }
 
+        String verificationToken = emailVerificationTokenService.createVerificationToken(savedUser);
+
+        eventPublisher.publishEvent(new VerificationEmailRequestedEvent(savedUser.getEmail(),verificationToken));
+
         return savedUser;
+
     }
 
     @Override
@@ -106,6 +121,12 @@ public class UserServiceImpl implements UserService {
 
             existingUser.setEmail(user.getEmail());
             existingUser.setEmailVerified(false);
+
+            emailVerificationTokenService.deleteTokenByUserId(existingUser.getId());
+
+            String verificationToken = emailVerificationTokenService.createVerificationToken(existingUser);
+
+            eventPublisher.publishEvent(new VerificationEmailRequestedEvent(existingUser.getEmail(),verificationToken));
         }
 
         if (user.getName() != null) {
@@ -121,4 +142,40 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
         userRepository.delete(user);
     }
+
+
+    @Override
+    @Transactional
+    public void resendVerificationEmail(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null || user.isEmailVerified()) {
+            return;
+        }
+
+        EmailVerificationToken latestToken =
+                emailVerificationTokenService
+                        .getLatestTokenByUserId(user.getId())
+                        .orElse(null);
+
+        if (latestToken != null
+                && latestToken.getCreatedAt() != null
+                && latestToken.getCreatedAt().isAfter(
+                OffsetDateTime.now().minusSeconds(60))) {
+            return;
+        }
+
+        emailVerificationTokenService.deleteTokenByUserId(user.getId());
+
+        String verificationToken =
+                emailVerificationTokenService.createVerificationToken(user);
+
+        eventPublisher.publishEvent(
+                new VerificationEmailRequestedEvent(
+                        user.getEmail(),
+                        verificationToken
+                )
+        );
+    }
+
 }
